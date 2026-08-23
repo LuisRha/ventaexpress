@@ -27,12 +27,24 @@ export interface CreateOrderData {
 
 export const ordersService = {
   /**
-   * Crear pedido público (llamada a Edge Function).
+   * Crear pedido público (llamada a Database Function RPC).
    * IMPORTANTE: El precio se calcula en backend, no confiamos en frontend.
    */
   async createOrder(data: CreateOrderData): Promise<{ orderNumber: number | null; error: string | null }> {
-    const { data: result, error } = await supabase.functions.invoke('create-order', {
-      body: data,
+    const { data: result, error } = await supabase.rpc('create_order', {
+      p_product_id: data.productId,
+      p_business_id: data.businessId,
+      p_first_name: data.firstName,
+      p_last_name: data.lastName,
+      p_phone: data.phone,
+      p_province: data.province,
+      p_city: data.city,
+      p_address: data.address,
+      p_quantity: data.quantity,
+      p_second_name: data.secondName || null,
+      p_second_last_name: data.secondLastName || null,
+      p_reference: data.reference || null,
+      p_customer_notes: data.customerNotes || null,
     })
 
     if (error) {
