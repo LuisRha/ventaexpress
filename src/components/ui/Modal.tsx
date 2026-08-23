@@ -59,10 +59,20 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
         )}
       >
         {title && (
-          <div className="mb-4">
+          <div className="flex items-center justify-between mb-4">
             <h2 id="modal-title" className="text-lg font-semibold text-secondary-900">
               {title}
             </h2>
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-1.5 rounded-lg text-secondary-400 hover:text-secondary-700 hover:bg-secondary-100 transition-colors"
+              aria-label="Cerrar"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         )}
         {children}
