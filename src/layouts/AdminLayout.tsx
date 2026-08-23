@@ -1,0 +1,64 @@
+import { Outlet, NavLink } from 'react-router-dom'
+import { cn } from '@/utils/cn'
+import { APP_NAME } from '@/utils/constants'
+
+const adminNavItems = [
+  { label: 'Dashboard', href: '/admin' },
+  { label: 'Usuarios', href: '/admin/users' },
+  { label: 'Negocios', href: '/admin/businesses' },
+  { label: 'Planes', href: '/admin/plans' },
+  { label: 'Pagos', href: '/admin/payments' },
+  { label: 'Logs', href: '/admin/logs' },
+]
+
+export function AdminLayout() {
+  return (
+    <div className="min-h-screen bg-secondary-900">
+      {/* Admin navbar */}
+      <header className="sticky top-0 z-40 border-b border-secondary-700 bg-secondary-900">
+        <div className="flex h-14 items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <div className="h-7 w-7 rounded bg-primary-600 flex items-center justify-center">
+              <span className="text-white font-bold text-xs">VE</span>
+            </div>
+            <span className="font-medium text-white text-sm">
+              {APP_NAME} <span className="text-secondary-400">Admin</span>
+            </span>
+          </div>
+          <button
+            type="button"
+            className="text-sm text-secondary-400 hover:text-white transition-colors"
+          >
+            Salir
+          </button>
+        </div>
+
+        {/* Navigation tabs */}
+        <nav className="px-4 sm:px-6 flex gap-1 overflow-x-auto scrollbar-hide">
+          {adminNavItems.map((item) => (
+            <NavLink
+              key={item.href}
+              to={item.href}
+              end={item.href === '/admin'}
+              className={({ isActive }) =>
+                cn(
+                  'px-3 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors',
+                  isActive
+                    ? 'border-primary-500 text-white'
+                    : 'border-transparent text-secondary-400 hover:text-secondary-200'
+                )
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+      </header>
+
+      {/* Content */}
+      <main className="p-4 sm:p-6 lg:p-8">
+        <Outlet />
+      </main>
+    </div>
+  )
+}

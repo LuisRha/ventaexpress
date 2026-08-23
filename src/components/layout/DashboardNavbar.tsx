@@ -1,0 +1,103 @@
+import { useState } from 'react'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { cn } from '@/utils/cn'
+import { APP_NAME } from '@/utils/constants'
+import { useAuth } from '@/contexts/AuthContext'
+
+export function DashboardNavbar() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { signOut, user } = useAuth()
+  const navigate = useNavigate()
+
+  const handleSignOut = async () => {
+    await signOut()
+    navigate('/', { replace: true })
+  }
+
+  return (
+    <header className="sticky top-0 z-40 w-full border-b border-secondary-200 bg-white">
+      <div className="flex h-16 items-center justify-between px-4 sm:px-6">
+        {/* Logo + mobile toggle */}
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            className="lg:hidden p-2 rounded-lg text-secondary-600 hover:bg-secondary-100 focus-ring"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Menú de navegación"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <Link to="/dashboard" className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-primary-600 flex items-center justify-center">
+              <span className="text-white font-bold text-sm">VE</span>
+            </div>
+            <span className="font-semibold text-secondary-900 hidden sm:inline">
+              {APP_NAME}
+            </span>
+          </Link>
+        </div>
+
+        {/* Right section */}
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            className="p-2 rounded-lg text-secondary-500 hover:bg-secondary-100 focus-ring"
+            aria-label="Notificaciones"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+            </svg>
+          </button>
+          <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center" title={user?.email ?? ''}>
+            <span className="text-primary-700 font-medium text-sm">
+              {user?.user_metadata?.full_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile navigation */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden border-t border-secondary-200 bg-white animate-fade-in">
+          <nav className="px-4 py-3 space-y-1">
+            {[
+              { label: 'Resumen', href: '/dashboard' },
+              { label: 'Productos', href: '/dashboard/products' },
+              { label: 'Pedidos', href: '/dashboard/orders' },
+              { label: 'Clientes', href: '/dashboard/customers' },
+              { label: 'Plan', href: '/dashboard/plan' },
+              { label: 'Configuración', href: '/dashboard/settings' },
+            ].map((item) => (
+              <NavLink
+                key={item.href}
+                to={item.href}
+                end={item.href === '/dashboard'}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  cn(
+                    'block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                    isActive
+                      ? 'bg-primary-50 text-primary-700'
+                      : 'text-secondary-600 hover:bg-secondary-50'
+                  )
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+            <hr className="border-secondary-200 my-2" />
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-danger-600 hover:bg-danger-50 transition-colors"
+            >
+              Cerrar sesión
+            </button>
+          </nav>
+        </div>
+      )}
+    </header>
+  )
+}
