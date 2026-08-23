@@ -41,8 +41,8 @@ export function PlanPage() {
   const planFeatures: Record<string, string[]> = {
     free: ['2 productos', '3 imágenes por producto', 'Pedidos ilimitados', 'WhatsApp', 'Branding VentaExpress'],
     pro: ['5 productos', '5 imágenes por producto', 'Pedidos ilimitados', 'WhatsApp', 'Gestión de clientes', 'Branding VentaExpress'],
-    premium: ['10 productos', '10 imágenes por producto', 'Pedidos ilimitados', 'WhatsApp', 'Sin branding', 'Gestión de clientes', 'Dashboard avanzado'],
-    enterprise: ['20 productos', '10 imágenes por producto', 'Pedidos ilimitados', 'WhatsApp', 'Sin branding', 'Gestión de clientes', 'Dashboard avanzado', 'Soporte prioritario', 'Analíticas'],
+    premium: ['10 productos', '5 imágenes por producto', 'Pedidos ilimitados', 'WhatsApp', 'Sin branding', 'Gestión de clientes', 'Dashboard avanzado'],
+    enterprise: ['20 productos', '5 imágenes por producto', 'Pedidos ilimitados', 'WhatsApp', 'Sin branding', 'Gestión de clientes', 'Dashboard avanzado', 'Soporte prioritario', 'Analíticas'],
   }
 
   return (
