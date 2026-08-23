@@ -8,10 +8,15 @@ import { LoadingPage } from '@/components/shared/LoadingPage'
  * - Si NO tiene negocio → redirige a la página de onboarding.
  */
 export function OnboardingGuard() {
-  const { isLoading, hasBusiness } = useAuth()
+  const { isLoading, hasBusiness, isAdmin } = useAuth()
 
   if (isLoading) {
     return <LoadingPage />
+  }
+
+  // CEO/Admin no necesita crear negocio para acceder al dashboard
+  if (isAdmin) {
+    return <Outlet />
   }
 
   if (!hasBusiness) {
