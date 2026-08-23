@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 
-const PAYPAL_CLIENT_ID = 'AeI43wyKUL9y88HU3UYPuuIDNBuRkJmhUKi4vJJBXL-WK1wiXBYRNNlmVWqADireX6GNmwxU_P0SbaHW'
+const PAYPAL_CLIENT_ID = 'BAAKQuM7STS2AkwaHIenBo0ITa38AoSgVxmgpfWflPbKZVhfB3_rIoBGW2ToVaAg8y3DNAI5VCTwNVl7Wg'
 
 declare global {
   interface Window {
