@@ -30,6 +30,9 @@ import { SettingsPage } from '@/pages/dashboard/SettingsPage'
 // Pages — Admin
 import { AdminDashboard } from '@/pages/admin/AdminDashboard'
 import { AdminBusinesses } from '@/pages/admin/AdminBusinesses'
+import { AdminUsers } from '@/pages/admin/AdminUsers'
+import { AdminPlans } from '@/pages/admin/AdminPlans'
+import { AdminPayments } from '@/pages/admin/AdminPayments'
 import { AdminLogs } from '@/pages/admin/AdminLogs'
 
 export function App() {
@@ -84,7 +87,10 @@ export function App() {
       <Route element={<AdminRoute />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/businesses" element={<AdminBusinesses />} />
+          <Route path="/admin/plans" element={<AdminPlans />} />
+          <Route path="/admin/payments" element={<AdminPayments />} />
           <Route path="/admin/logs" element={<AdminLogs />} />
         </Route>
       </Route>
