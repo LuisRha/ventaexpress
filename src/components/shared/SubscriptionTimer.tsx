@@ -68,7 +68,7 @@ export function SubscriptionTimer({ businessId }: SubscriptionTimerProps) {
   // Últimos 3 días
   if (timeLeft.days <= 3) {
     return (
-      <div className="mt-2 bg-red-50 border border-red-200 rounded px-3 py-1.5 inline-flex items-center gap-2">
+      <div className="bg-red-50 border border-red-200 rounded px-3 py-1.5 inline-flex items-center gap-2">
         <span className="text-xs font-bold text-red-700">⚠️ Vence en</span>
         <span className="font-mono text-sm font-bold text-red-800">
           {timeLeft.days}d {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
@@ -80,7 +80,7 @@ export function SubscriptionTimer({ businessId }: SubscriptionTimerProps) {
   // Últimos 7 días
   if (timeLeft.days <= 7) {
     return (
-      <div className="mt-2 bg-amber-50 border border-amber-200 rounded px-3 py-1.5 inline-flex items-center gap-2">
+      <div className="bg-amber-50 border border-amber-200 rounded px-3 py-1.5 inline-flex items-center gap-2">
         <span className="text-xs font-medium text-amber-700">⏰</span>
         <span className="font-mono text-sm font-bold text-amber-800">
           {timeLeft.days}d {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
@@ -92,7 +92,7 @@ export function SubscriptionTimer({ businessId }: SubscriptionTimerProps) {
 
   // Normal
   return (
-    <div className="mt-2 bg-orange-50 border border-orange-200 rounded px-3 py-1.5 inline-flex items-center gap-2">
+    <div className="bg-orange-50 border border-orange-200 rounded px-3 py-1.5 inline-flex items-center gap-2">
       <span className="text-xs text-orange-700">📅</span>
       <span className="font-mono text-sm font-bold text-orange-800">
         {timeLeft.days}d {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}

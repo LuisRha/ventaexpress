@@ -58,16 +58,18 @@ export function PlanPage() {
       {currentPlan && (
         <Card className="mb-2 bg-gradient-to-r from-primary-50 to-blue-50 border-primary-200 p-3">
           <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-secondary-900">{currentPlan.name}</span>
-                <Badge variant="success">Activo</Badge>
+            <div className="flex items-center gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-secondary-900">{currentPlan.name}</span>
+                  <Badge variant="success">Activo</Badge>
+                </div>
+                <p className="text-xs text-secondary-600">{currentPlan.maxProducts} productos, {currentPlan.maxImagesPerProduct} imágenes</p>
               </div>
-              <p className="text-xs text-secondary-600">{currentPlan.maxProducts} productos, {currentPlan.maxImagesPerProduct} imágenes</p>
+              <SubscriptionTimer businessId={business?.id || ''} />
             </div>
             <p className="text-xl font-bold text-secondary-900">{formatPrice(currentPlan.price)}<span className="text-xs font-normal text-secondary-500">/mes</span></p>
           </div>
-          <SubscriptionTimer businessId={business?.id || ''} />
         </Card>
       )}
 
