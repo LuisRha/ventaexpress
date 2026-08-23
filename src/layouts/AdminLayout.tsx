@@ -7,6 +7,7 @@ const adminNavItems = [
   { label: 'Dashboard', href: '/admin' },
   { label: 'Usuarios', href: '/admin/users' },
   { label: 'Negocios', href: '/admin/businesses' },
+  { label: 'Mensajes', href: '/admin/messages' },
   { label: 'Planes', href: '/admin/plans' },
   { label: 'Pagos', href: '/admin/payments' },
   { label: 'Logs', href: '/admin/logs' },

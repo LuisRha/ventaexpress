@@ -26,6 +26,7 @@ import { OrdersPage } from '@/pages/dashboard/OrdersPage'
 import { CustomersPage } from '@/pages/dashboard/CustomersPage'
 import { PlanPage } from '@/pages/dashboard/PlanPage'
 import { SettingsPage } from '@/pages/dashboard/SettingsPage'
+import { MessagesPage } from '@/pages/dashboard/MessagesPage'
 
 // Pages — Admin
 import { AdminDashboard } from '@/pages/admin/AdminDashboard'
@@ -33,6 +34,7 @@ import { AdminBusinesses } from '@/pages/admin/AdminBusinesses'
 import { AdminUsers } from '@/pages/admin/AdminUsers'
 import { AdminPlans } from '@/pages/admin/AdminPlans'
 import { AdminPayments } from '@/pages/admin/AdminPayments'
+import { AdminMessages } from '@/pages/admin/AdminMessages'
 import { AdminLogs } from '@/pages/admin/AdminLogs'
 
 export function App() {
@@ -77,6 +79,7 @@ export function App() {
             <Route path="/dashboard/customers" element={<CustomersPage />} />
             <Route path="/dashboard/plan" element={<PlanPage />} />
             <Route path="/dashboard/settings" element={<SettingsPage />} />
+            <Route path="/dashboard/messages" element={<MessagesPage />} />
           </Route>
         </Route>
       </Route>
@@ -91,6 +94,7 @@ export function App() {
           <Route path="/admin/businesses" element={<AdminBusinesses />} />
           <Route path="/admin/plans" element={<AdminPlans />} />
           <Route path="/admin/payments" element={<AdminPayments />} />
+          <Route path="/admin/messages" element={<AdminMessages />} />
           <Route path="/admin/logs" element={<AdminLogs />} />
         </Route>
       </Route>
