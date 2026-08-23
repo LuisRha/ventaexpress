@@ -67,12 +67,12 @@ export function PlanPage() {
               <p className="text-sm text-secondary-600">
                 {currentPlan.maxProducts} productos, {currentPlan.maxImagesPerProduct} imágenes por producto
               </p>
-              <SubscriptionTimer businessId={business?.id || ''} />
             </div>
             <div className="text-right">
               <p className="text-2xl font-bold text-secondary-900">{formatPrice(currentPlan.price)}<span className="text-sm font-normal text-secondary-500">/mes</span></p>
             </div>
           </div>
+          <SubscriptionTimer businessId={business?.id || ''} />
         </Card>
       )}
 
