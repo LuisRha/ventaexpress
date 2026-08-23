@@ -453,36 +453,83 @@ interface OrderFormProps {
 
 function OrderForm({ product, errors, register, control, handleSubmit, onSubmit, isSubmitting, orderError, provinceOptions, currentPrice }: OrderFormProps) {
   return (
-    <div className="bg-secondary-50 rounded-2xl p-5 border border-secondary-200">
-      <h3 className="text-lg font-bold text-secondary-900 mb-1">Completa tu pedido</h3>
-      <p className="text-sm text-secondary-500 mb-4">Pago contra entrega · {product.name}</p>
+    <div className="bg-gradient-to-b from-primary-50 to-blue-50 rounded-2xl p-5 sm:p-6 border-2 border-primary-200 shadow-lg shadow-primary-100/50">
+      {/* Header */}
+      <div className="bg-white rounded-xl p-4 mb-5 border border-primary-100 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-full bg-primary-600 flex items-center justify-center flex-shrink-0">
+            <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-secondary-900">Completa tu pedido</h3>
+            <p className="text-sm text-secondary-500">{product.name} · Pago contra entrega</p>
+          </div>
+        </div>
+      </div>
 
       {orderError && <Alert variant="error" className="mb-4">{orderError}</Alert>}
 
-      <form className="space-y-3" onSubmit={handleSubmit(onSubmit)} noValidate>
-        <div className="grid grid-cols-2 gap-3">
-          <Input label="Nombre" placeholder="Juan" error={errors.firstName?.message} {...register('firstName')} />
-          <Input label="Apellido" placeholder="Pérez" error={errors.lastName?.message} {...register('lastName')} />
-        </div>
-        <Input label="Teléfono" type="tel" placeholder="0991234567" error={errors.phone?.message} {...register('phone')} />
-        <Controller name="province" control={control} render={({ field }) => (
-          <Select label="Provincia" options={provinceOptions} placeholder="Selecciona" error={errors.province?.message} value={field.value || ''} onChange={field.onChange} />
-        )} />
-        <Input label="Ciudad" placeholder="Tu ciudad" error={errors.city?.message} {...register('city')} />
-        <Textarea label="Dirección" placeholder="Calle, número, sector..." error={errors.address?.message} {...register('address')} />
-        <Input label="Referencia" placeholder="Cerca de..." error={errors.reference?.message} {...register('reference')} />
-
-        <div className="bg-white rounded-xl p-3 border border-secondary-200 mt-4">
-          <div className="flex justify-between items-center">
-            <span className="font-medium text-secondary-700">Total:</span>
-            <span className="text-2xl font-bold text-primary-600">{formatPrice(currentPrice)}</span>
+      <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
+        {/* Datos personales */}
+        <div className="bg-white rounded-xl p-4 border border-secondary-200 space-y-3">
+          <p className="text-xs font-semibold text-primary-600 uppercase tracking-wide mb-2">👤 Datos personales</p>
+          <div className="grid grid-cols-2 gap-3">
+            <Input label="Nombre" placeholder="Juan" error={errors.firstName?.message} {...register('firstName')} />
+            <Input label="Apellido" placeholder="Pérez" error={errors.lastName?.message} {...register('lastName')} />
           </div>
-          <p className="text-xs text-secondary-500">Pagas al recibir el producto</p>
+          <Input label="Teléfono" type="tel" placeholder="0991234567" error={errors.phone?.message} {...register('phone')} />
         </div>
 
-        <Button type="submit" size="lg" fullWidth isLoading={isSubmitting} className="mt-4 py-4 text-base shadow-lg shadow-primary-500/25">
-          ✅ Confirmar pedido
+        {/* Dirección */}
+        <div className="bg-white rounded-xl p-4 border border-secondary-200 space-y-3">
+          <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-2">📍 Dirección de entrega</p>
+          <Controller name="province" control={control} render={({ field }) => (
+            <Select label="Provincia" options={provinceOptions} placeholder="Selecciona tu provincia" error={errors.province?.message} value={field.value || ''} onChange={field.onChange} />
+          )} />
+          <Input label="Ciudad" placeholder="Tu ciudad" error={errors.city?.message} {...register('city')} />
+          <Textarea label="Dirección completa" placeholder="Calle principal, número, sector..." error={errors.address?.message} {...register('address')} />
+          <Input label="Referencia (opcional)" placeholder="Cerca de..." error={errors.reference?.message} {...register('reference')} />
+        </div>
+
+        {/* Total */}
+        <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-4 text-white">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-sm text-primary-100">Total a pagar</p>
+              <p className="text-xs text-primary-200">Pagas al recibir en tu puerta</p>
+            </div>
+            <span className="text-3xl font-bold">{formatPrice(currentPrice)}</span>
+          </div>
+        </div>
+
+        {/* Submit */}
+        <Button
+          type="submit"
+          size="lg"
+          fullWidth
+          isLoading={isSubmitting}
+          className="py-4 text-base font-bold shadow-xl shadow-primary-500/30 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800"
+        >
+          ✅ CONFIRMAR PEDIDO
         </Button>
+
+        {/* Trust */}
+        <div className="flex items-center justify-center gap-4 pt-2">
+          <span className="flex items-center gap-1 text-xs text-secondary-500">
+            <svg className="h-3.5 w-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+            </svg>
+            Datos seguros
+          </span>
+          <span className="flex items-center gap-1 text-xs text-secondary-500">
+            <svg className="h-3.5 w-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+            Sin compromiso
+          </span>
+        </div>
       </form>
     </div>
   )
