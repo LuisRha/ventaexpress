@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/Button'
 import { Alert } from '@/components/ui/Alert'
 import { Modal } from '@/components/ui/Modal'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
+import { PayPalCheckout } from '@/components/payments/PayPalCheckout'
 import { useAuth } from '@/contexts/AuthContext'
 import { plansService } from '@/services/plans.service'
-import { supabase } from '@/lib/supabase'
 import type { Plan } from '@/types'
 import { formatPrice } from '@/utils/format'
 
@@ -152,33 +152,20 @@ export function PlanPage() {
               <p className="text-sm text-secondary-500 mt-1">{selectedPlan.maxProducts} productos, {selectedPlan.maxImagesPerProduct} imágenes</p>
             </div>
 
-            <Button
-              fullWidth
-              size="lg"
-              className="bg-[#0070ba] hover:bg-[#005ea6] text-white"
-              onClick={async () => {
-                // Activar plan directamente (en producción esto se haría después de verificar el pago)
-                if (!business) return
-                await supabase.from('businesses').update({ plan_id: selectedPlan.id }).eq('id', business.id)
-                await supabase.from('payments').insert({
-                  business_id: business.id,
-                  provider: 'paypal',
-                  provider_payment_id: `manual_${Date.now()}`,
-                  amount: selectedPlan.price,
-                  currency: 'USD',
-                  status: 'completed',
-                  payment_type: 'subscription',
-                })
+            <PayPalCheckout
+              planId={selectedPlan.id}
+              planName={selectedPlan.name}
+              amount={selectedPlan.price.toFixed(2)}
+              businessId={business?.id || ''}
+              onSuccess={() => {
                 setSelectedPlan(null)
-                setMessage(`¡Plan ${selectedPlan.name} activado!`)
-                window.location.reload()
+                setMessage(`¡Plan ${selectedPlan.name} activado correctamente!`)
+                setTimeout(() => window.location.reload(), 1500)
               }}
-            >
-              💳 Pagar con PayPal — {formatPrice(selectedPlan.price)}
-            </Button>
+            />
 
             <p className="text-xs text-secondary-500 text-center">
-              En modo prueba el plan se activa directamente. En producción se conectará con PayPal real.
+              Pago seguro procesado por PayPal.
             </p>
           </div>
         </Modal>
