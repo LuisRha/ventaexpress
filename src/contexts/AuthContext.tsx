@@ -25,6 +25,7 @@ interface AuthContextType {
   isLoading: boolean
   isAdmin: boolean
   hasBusiness: boolean
+  dataReady: boolean
 
   // Acciones
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>
@@ -191,6 +192,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading: isLoading || (!!session && !businessLoaded),
     isAdmin: role === 'admin',
     hasBusiness: !!business,
+    dataReady: businessLoaded,
     signUp,
     signIn,
     signOut,

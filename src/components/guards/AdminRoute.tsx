@@ -4,15 +4,13 @@ import { LoadingPage } from '@/components/shared/LoadingPage'
 
 /**
  * Guard para rutas de administrador.
- * Requiere:
- * 1. Sesión activa (autenticación)
- * 2. role = 'admin' (autorización)
- * 
- * Un usuario normal que intente acceder a /admin será redirigido al dashboard.
+ * Espera a que se carguen todos los datos (sesión + rol + negocio)
+ * antes de decidir si redirigir.
  */
 export function AdminRoute() {
   const { isAuthenticated, isAdmin, isLoading } = useAuth()
 
+  // IMPORTANTE: No redirigir hasta que TODO esté cargado
   if (isLoading) {
     return <LoadingPage />
   }
@@ -22,7 +20,6 @@ export function AdminRoute() {
   }
 
   if (!isAdmin) {
-    // Usuario autenticado pero no es admin → dashboard
     return <Navigate to="/dashboard" replace />
   }
 
