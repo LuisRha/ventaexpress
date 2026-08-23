@@ -37,11 +37,51 @@ export function AdminUsers() {
 
   const handleDeleteUser = async (userId: string) => {
     setActionLoading(true)
+
+    // 1. Obtener business_id del usuario
+    const { data: biz } = await supabase
+      .from('businesses')
+      .select('id')
+      .eq('owner_user_id', userId)
+      .maybeSingle()
+
+    // 2. Eliminar archivos del Storage si tiene negocio
+    if (biz?.id) {
+      // Eliminar imágenes de productos
+      const { data: productFiles } = await supabase.storage
+        .from('product-images')
+        .list(`products/${biz.id}`, { limit: 1000 })
+
+      if (productFiles && productFiles.length > 0) {
+        // Listar subcarpetas (cada producto)
+        for (const folder of productFiles) {
+          const { data: innerFiles } = await supabase.storage
+            .from('product-images')
+            .list(`products/${biz.id}/${folder.name}`, { limit: 100 })
+
+          if (innerFiles && innerFiles.length > 0) {
+            const paths = innerFiles.map(f => `products/${biz.id}/${folder.name}/${f.name}`)
+            await supabase.storage.from('product-images').remove(paths)
+          }
+        }
+      }
+
+      // Eliminar logos
+      const { data: logoFiles } = await supabase.storage
+        .from('product-images')
+        .list(`logos/${biz.id}`, { limit: 100 })
+
+      if (logoFiles && logoFiles.length > 0) {
+        const logoPaths = logoFiles.map(f => `logos/${biz.id}/${f.name}`)
+        await supabase.storage.from('product-images').remove(logoPaths)
+      }
+    }
+
+    // 3. Eliminar usuario de la DB (función RPC borra auth + datos)
     const { data, error } = await supabase.rpc('admin_delete_user', { p_user_id: userId })
 
     if (error || data?.error) {
-      setActionLoading(false)
-      return
+      console.error('Error eliminando usuario:', error || data?.error)
     }
 
     setActionLoading(false)
