@@ -50,6 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [business, setBusiness] = useState<Business | null>(null)
   const [role, setRole] = useState<UserRole | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [businessLoaded, setBusinessLoaded] = useState(false)
 
   // Cargar datos del negocio y rol del usuario
   const loadUserData = useCallback(async () => {
@@ -64,6 +65,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       setBusiness(null)
       setRole('seller')
+    } finally {
+      setBusinessLoaded(true)
     }
   }, [])
 
@@ -77,7 +80,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true
 
-    // Obtener sesión inicial
     const initSession = async () => {
       try {
         const { session: currentSession } = await authService.getSession()
@@ -89,11 +91,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (currentSession?.user) {
           await loadUserData()
+        } else {
+          setBusinessLoaded(true)
         }
       } catch {
-        // Error obteniendo sesión — limpiar estado
         setSession(null)
         setUser(null)
+        setBusinessLoaded(true)
       } finally {
         if (mounted) {
           setIsLoading(false)
@@ -112,12 +116,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(newSession?.user ?? null)
 
         if (event === 'SIGNED_IN' && newSession?.user) {
+          setBusinessLoaded(false)
           await loadUserData()
         }
 
         if (event === 'SIGNED_OUT') {
           setBusiness(null)
           setRole(null)
+          setBusinessLoaded(true)
         }
 
         setIsLoading(false)
@@ -182,7 +188,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     business,
     role,
     isAuthenticated: !!session,
-    isLoading,
+    isLoading: isLoading || (!!session && !businessLoaded),
     isAdmin: role === 'admin',
     hasBusiness: !!business,
     signUp,
