@@ -21,10 +21,18 @@ export function PayPalCheckout({ planId, planName, amount, businessId, onSuccess
       return
     }
 
+    // Fechas de suscripción (30 días desde ahora)
+    const now = new Date()
+    const end = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+
     // Activar plan en la base de datos
     await supabase
       .from('businesses')
-      .update({ plan_id: planId })
+      .update({
+        plan_id: planId,
+        subscription_start: now.toISOString(),
+        subscription_end: end.toISOString(),
+      })
       .eq('id', businessId)
 
     // Registrar pago

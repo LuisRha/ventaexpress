@@ -6,6 +6,7 @@ import { Alert } from '@/components/ui/Alert'
 import { Modal } from '@/components/ui/Modal'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { PayPalCheckout } from '@/components/payments/PayPalCheckout'
+import { SubscriptionTimer } from '@/components/shared/SubscriptionTimer'
 import { useAuth } from '@/contexts/AuthContext'
 import { plansService } from '@/services/plans.service'
 import type { Plan } from '@/types'
@@ -66,6 +67,7 @@ export function PlanPage() {
               <p className="text-sm text-secondary-600">
                 {currentPlan.maxProducts} productos, {currentPlan.maxImagesPerProduct} imágenes por producto
               </p>
+              <SubscriptionTimer businessId={business?.id || ''} />
             </div>
             <div className="text-right">
               <p className="text-2xl font-bold text-secondary-900">{formatPrice(currentPlan.price)}<span className="text-sm font-normal text-secondary-500">/mes</span></p>
