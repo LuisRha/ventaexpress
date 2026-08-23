@@ -41,7 +41,7 @@ export function AdminLayout() {
             <button
               type="button"
               onClick={handleSignOut}
-              className="text-sm text-danger-400 hover:text-danger-300 transition-colors"
+              className="text-sm bg-red-500 text-white px-4 py-1.5 rounded-lg hover:bg-red-600 transition-colors"
             >
               Cerrar sesión
             </button>
