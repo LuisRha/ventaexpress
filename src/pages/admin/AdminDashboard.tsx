@@ -2,16 +2,13 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { adminService } from '@/services/admin.service'
-import { useAuth } from '@/contexts/AuthContext'
 import { formatPrice } from '@/utils/format'
 
 export function AdminDashboard() {
   const [stats, setStats] = useState<Record<string, number> | null>(null)
   const [loading, setLoading] = useState(true)
-  const { user } = useAuth()
 
   useEffect(() => {
     const load = async () => {
@@ -38,25 +35,6 @@ export function AdminDashboard() {
         <h1 className="text-2xl font-bold text-white">Panel de Administración</h1>
         <p className="text-secondary-400 mt-1">Vista general de la plataforma VentaExpress</p>
       </div>
-
-      {/* CEO Profile */}
-      <Card className="mb-8 bg-gradient-to-r from-secondary-800 to-secondary-900 border-secondary-700">
-        <div className="flex items-center gap-4">
-          <div className="h-14 w-14 rounded-full bg-primary-600 flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-bold text-xl">
-              {user?.user_metadata?.full_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'C'}
-            </span>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-white">{user?.user_metadata?.full_name || 'CEO'}</h2>
-              <Badge variant="primary">CEO</Badge>
-            </div>
-            <p className="text-sm text-secondary-400">{user?.email}</p>
-            <p className="text-xs text-secondary-500 mt-0.5">Administrador de la plataforma VentaExpress</p>
-          </div>
-        </div>
-      </Card>
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">

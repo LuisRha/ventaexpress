@@ -6,9 +6,17 @@ import { supabase } from '@/lib/supabase'
 
 export const adminService = {
   async getStats() {
+    // Obtener IDs de admins para excluirlos
+    const { data: admins } = await supabase
+      .from('user_roles')
+      .select('user_id')
+      .eq('role', 'admin')
+
+    const adminIds = (admins || []).map(a => a.user_id)
+
     const [users, businesses, products, orders, payments] = await Promise.all([
       supabase.from('user_roles').select('*', { count: 'exact', head: true }).eq('role', 'seller'),
-      supabase.from('businesses').select('*', { count: 'exact', head: true }).neq('status', 'deleted'),
+      supabase.from('businesses').select('*', { count: 'exact', head: true }).neq('status', 'deleted').not('owner_user_id', 'in', `(${adminIds.join(',')})`),
       supabase.from('products').select('*', { count: 'exact', head: true }).neq('status', 'deleted'),
       supabase.from('orders').select('*', { count: 'exact', head: true }),
       supabase.from('payments').select('amount').eq('status', 'completed'),
