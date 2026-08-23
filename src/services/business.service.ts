@@ -30,20 +30,22 @@ export const businessService = {
    * Retorna null si aún no ha creado negocio.
    */
   async getMyBusiness(): Promise<{ business: Business | null; error: string | null }> {
-    // Usamos la función RPC get_user_business_id para obtener el negocio propio
-    const { data: businessId, error: rpcError } = await supabase.rpc('get_user_business_id')
-
-    if (rpcError || !businessId) {
-      return { business: null, error: null }
-    }
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) return { business: null, error: null }
 
     const { data, error } = await supabase
       .from('businesses')
       .select('*')
-      .eq('id', businessId)
-      .single()
+      .eq('owner_user_id', session.user.id)
+      .eq('status', 'active')
+      .maybeSingle()
 
-    if (error || !data) {
+    if (error) {
+      console.warn('[getMyBusiness]', error.message)
+      return { business: null, error: null }
+    }
+
+    if (!data) {
       return { business: null, error: null }
     }
 
