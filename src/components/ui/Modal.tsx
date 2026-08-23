@@ -54,7 +54,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
       <div
         className={cn(
           'relative w-full bg-white rounded-xl shadow-xl animate-slide-up',
-          'p-5 sm:p-6',
+          'p-5 sm:p-6 max-h-[90vh] overflow-y-auto',
           sizeStyles[size]
         )}
       >
