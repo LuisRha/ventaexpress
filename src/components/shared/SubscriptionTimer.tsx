@@ -7,7 +7,8 @@ interface SubscriptionTimerProps {
 }
 
 export function SubscriptionTimer({ businessId }: SubscriptionTimerProps) {
-  const [daysLeft, setDaysLeft] = useState<number | null>(null)
+  const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -20,51 +21,83 @@ export function SubscriptionTimer({ businessId }: SubscriptionTimerProps) {
         .single()
 
       if (data?.subscription_end) {
-        const end = new Date(data.subscription_end)
-        const now = new Date()
-        const diff = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
-        setDaysLeft(diff)
+        setEndDate(new Date(data.subscription_end))
       }
       setLoading(false)
     }
     load()
   }, [businessId])
 
-  if (loading || daysLeft === null) return null
+  // Countdown timer que actualiza cada segundo
+  useEffect(() => {
+    if (!endDate) return
+
+    const update = () => {
+      const now = new Date()
+      const diff = endDate.getTime() - now.getTime()
+
+      if (diff <= 0) {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+        return
+      }
+
+      setTimeLeft({
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((diff % (1000 * 60)) / 1000),
+      })
+    }
+
+    update()
+    const interval = setInterval(update, 1000)
+    return () => clearInterval(interval)
+  }, [endDate])
+
+  if (loading || !timeLeft) return null
 
   // Expirado
-  if (daysLeft <= 0) {
+  if (timeLeft.days <= 0 && timeLeft.hours <= 0 && timeLeft.minutes <= 0 && timeLeft.seconds <= 0) {
     return (
-      <Alert variant="error" className="mt-3">
-        Tu plan ha expirado. Renueva para mantener tus productos activos.
+      <Alert variant="error" className="mt-2 py-1 px-3">
+        Tu plan ha expirado. Renueva ahora.
       </Alert>
     )
   }
 
-  // Últimos 3 días — urgente
-  if (daysLeft <= 3) {
+  // Últimos 3 días
+  if (timeLeft.days <= 3) {
     return (
-      <div className="mt-3 bg-danger-50 border border-danger-200 rounded-lg p-3">
-        <p className="text-sm font-bold text-danger-700">⚠️ Tu plan vence en {daysLeft} día{daysLeft > 1 ? 's' : ''}!</p>
-        <p className="text-xs text-danger-600">Renueva ahora para no perder acceso a tus productos.</p>
+      <div className="mt-2 bg-red-50 border border-red-200 rounded px-3 py-1.5 inline-flex items-center gap-2">
+        <span className="text-xs font-bold text-red-700">⚠️ Vence en</span>
+        <span className="font-mono text-sm font-bold text-red-800">
+          {timeLeft.days}d {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
+        </span>
       </div>
     )
   }
 
-  // Últimos 7 días — advertencia
-  if (daysLeft <= 7) {
+  // Últimos 7 días
+  if (timeLeft.days <= 7) {
     return (
-      <div className="mt-3 bg-warning-50 border border-warning-500/20 rounded-lg p-3">
-        <p className="text-sm font-medium text-warning-700">⏰ Te quedan {daysLeft} días de tu plan</p>
-        <p className="text-xs text-warning-600">Recuerda renovar antes de que expire.</p>
+      <div className="mt-2 bg-amber-50 border border-amber-200 rounded px-3 py-1.5 inline-flex items-center gap-2">
+        <span className="text-xs font-medium text-amber-700">⏰</span>
+        <span className="font-mono text-sm font-bold text-amber-800">
+          {timeLeft.days}d {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
+        </span>
+        <span className="text-xs text-amber-600">restantes</span>
       </div>
     )
   }
 
-  // Normal — mostrar días restantes
+  // Normal
   return (
-    <div className="mt-2 bg-orange-50 border border-orange-200 rounded px-3 py-1.5">
-      <p className="text-xs font-semibold text-orange-700">📅 {daysLeft} días restantes — Vence el {new Date(Date.now() + daysLeft * 24 * 60 * 60 * 1000).toLocaleDateString('es-EC', { day: 'numeric', month: 'short' })}</p>
+    <div className="mt-2 bg-orange-50 border border-orange-200 rounded px-3 py-1.5 inline-flex items-center gap-2">
+      <span className="text-xs text-orange-700">📅</span>
+      <span className="font-mono text-sm font-bold text-orange-800">
+        {timeLeft.days}d {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
+      </span>
+      <span className="text-xs text-orange-600">restantes</span>
     </div>
   )
 }
