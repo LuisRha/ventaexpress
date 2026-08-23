@@ -38,12 +38,6 @@ export function AdminLayout() {
             </Link>
           </div>
           <div className="flex items-center gap-4">
-            <Link
-              to="/dashboard"
-              className="text-sm text-secondary-400 hover:text-white transition-colors"
-            >
-              ← Dashboard
-            </Link>
             <button
               type="button"
               onClick={handleSignOut}
