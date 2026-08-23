@@ -9,7 +9,7 @@ interface PayPalButtonProps {
   onCancel?: () => void
 }
 
-const clientId = import.meta.env.VITE_PAYPAL_CLIENT_ID || ''
+const clientId = import.meta.env.VITE_PAYPAL_CLIENT_ID || 'AeI43wyKUL9y88HU3UYPuuIDNBuRkJmhUKi4vJJBXL-WK1wiXBYRNNlmVWqADireX6GNmwxU_P0SbaHW'
 
 export function PayPalPaymentButton({ planName, amount, onSuccess, onCancel }: PayPalButtonProps) {
   const [error, setError] = useState<string | null>(null)
