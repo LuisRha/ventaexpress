@@ -34,6 +34,20 @@ export function AdminUsers() {
 
   useEffect(() => { loadUsers() }, [])
 
+  const handleDeleteUser = async (userId: string) => {
+    setActionLoading(true)
+    const { data, error } = await supabase.rpc('admin_delete_user', { p_user_id: userId })
+
+    if (error || data?.error) {
+      setActionLoading(false)
+      return
+    }
+
+    setActionLoading(false)
+    setSelectedUser(null)
+    loadUsers()
+  }
+
   const handleSuspendBusiness = async (userId: string) => {
     setActionLoading(true)
     await supabase
@@ -216,10 +230,21 @@ export function AdminUsers() {
                   ♻️ Restaurar cuenta
                 </Button>
               )}
+
+              <hr className="border-secondary-200 my-2" />
+
+              <Button
+                variant="danger"
+                fullWidth
+                isLoading={actionLoading}
+                onClick={() => handleDeleteUser(selectedUser.user_id)}
+              >
+                🗑️ ELIMINAR USUARIO COMPLETAMENTE
+              </Button>
             </div>
 
             <p className="text-xs text-secondary-500">
-              Suspender desactiva el negocio y sus productos. Eliminar marca la cuenta como eliminada.
+              Suspender desactiva el negocio. Eliminar usuario borra TODO permanentemente (usuario, negocio, productos, pedidos).
             </p>
           </div>
         </Modal>
