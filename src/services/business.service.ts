@@ -153,13 +153,20 @@ export const businessService = {
    */
   async getUserRole(): Promise<{ role: string | null; error: string | null }> {
     const { data: { session } } = await supabase.auth.getSession()
-    if (!session?.user) return { role: 'seller', error: null }
+    if (!session?.user) {
+      console.log('[getUserRole] No session')
+      return { role: 'seller', error: null }
+    }
+
+    console.log('[getUserRole] Querying for user:', session.user.id)
 
     const { data, error } = await supabase
       .from('user_roles')
       .select('role')
       .eq('user_id', session.user.id)
       .maybeSingle()
+
+    console.log('[getUserRole] Result:', { data, error })
 
     if (error || !data) {
       return { role: 'seller', error: null }
