@@ -50,9 +50,9 @@ export function PlanPage() {
 
   return (
     <div>
-      <div className="mb-6">
+      <div className="mb-3">
         <h1 className="text-2xl font-bold text-secondary-900">Mi Plan</h1>
-        <p className="text-secondary-500 mt-1">Administra tu suscripción</p>
+        <p className="text-secondary-500 text-sm">Administra tu suscripción</p>
       </div>
 
       {/* Plan actual */}
