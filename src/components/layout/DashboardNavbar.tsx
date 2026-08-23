@@ -75,13 +75,6 @@ export function DashboardNavbar() {
                 >
                   Configuración
                 </Link>
-                <Link
-                  to="/admin"
-                  onClick={() => setIsProfileOpen(false)}
-                  className="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50 transition-colors"
-                >
-                  Panel Admin
-                </Link>
                 <hr className="my-1 border-secondary-100" />
                 <button
                   type="button"

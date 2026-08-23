@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { loginSchema, type LoginFormData } from '@/lib/validations/auth'
 
 export function LoginPage() {
-  const { signIn } = useAuth()
+  const { signIn, isAdmin, isAuthenticated, isLoading } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [serverError, setServerError] = useState<string | null>(null)
@@ -35,9 +35,20 @@ export function LoginPage() {
       return
     }
 
-    // Login exitoso — redirigir
-    navigate(from, { replace: true })
+    // Esperar a que el rol se cargue y redirigir según rol
+    // Se maneja en useEffect abajo
   }
+
+  // Redirigir después del login según rol
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      if (isAdmin) {
+        navigate('/admin', { replace: true })
+      } else {
+        navigate(from, { replace: true })
+      }
+    }
+  }, [isAuthenticated, isAdmin, isLoading, navigate, from])
 
   return (
     <>
