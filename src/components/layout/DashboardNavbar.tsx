@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext'
 
 export function DashboardNavbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
   const { signOut, user } = useAuth()
   const navigate = useNavigate()
 
@@ -50,10 +51,47 @@ export function DashboardNavbar() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
             </svg>
           </button>
-          <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center" title={user?.email ?? ''}>
-            <span className="text-primary-700 font-medium text-sm">
-              {user?.user_metadata?.full_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}
-            </span>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+              className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center hover:ring-2 hover:ring-primary-200 transition-all"
+              title={user?.email ?? ''}
+            >
+              <span className="text-primary-700 font-medium text-sm">
+                {user?.user_metadata?.full_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}
+              </span>
+            </button>
+            {isProfileOpen && (
+              <div className="absolute right-0 top-10 w-56 bg-white rounded-xl shadow-lg border border-secondary-200 py-2 z-50 animate-fade-in">
+                <div className="px-4 py-2 border-b border-secondary-100">
+                  <p className="text-sm font-medium text-secondary-900 truncate">{user?.user_metadata?.full_name || 'Usuario'}</p>
+                  <p className="text-xs text-secondary-500 truncate">{user?.email}</p>
+                </div>
+                <Link
+                  to="/dashboard/settings"
+                  onClick={() => setIsProfileOpen(false)}
+                  className="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50 transition-colors"
+                >
+                  Configuración
+                </Link>
+                <Link
+                  to="/admin"
+                  onClick={() => setIsProfileOpen(false)}
+                  className="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50 transition-colors"
+                >
+                  Panel Admin
+                </Link>
+                <hr className="my-1 border-secondary-100" />
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="w-full text-left px-4 py-2 text-sm text-danger-600 hover:bg-danger-50 transition-colors"
+                >
+                  Cerrar sesión
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
