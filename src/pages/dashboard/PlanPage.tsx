@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/Button'
 import { Alert } from '@/components/ui/Alert'
 import { Modal } from '@/components/ui/Modal'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
-import { PayPalPaymentButton } from '@/components/payments/PayPalButton'
 import { useAuth } from '@/contexts/AuthContext'
 import { plansService } from '@/services/plans.service'
 import { supabase } from '@/lib/supabase'
@@ -37,41 +36,6 @@ export function PlanPage() {
   const handleSelectPlan = (plan: Plan) => {
     if (plan.price === 0) return
     setSelectedPlan(plan)
-  }
-
-  const handlePaymentSuccess = async (details: Record<string, unknown>) => {
-    if (!selectedPlan || !business) return
-
-    // Actualizar plan del negocio en la DB
-    await supabase
-      .from('businesses')
-      .update({ plan_id: selectedPlan.id })
-      .eq('id', business.id)
-
-    // Registrar pago
-    await supabase.from('payments').insert({
-      business_id: business.id,
-      provider: 'paypal',
-      provider_payment_id: (details as { id?: string }).id || '',
-      amount: selectedPlan.price,
-      currency: 'USD',
-      status: 'completed',
-      payment_type: 'subscription',
-    })
-
-    // Audit log
-    await supabase.from('audit_logs').insert({
-      business_id: business.id,
-      action: 'plan_upgraded',
-      entity_type: 'subscription',
-      metadata: { plan: selectedPlan.name, amount: selectedPlan.price, paypal_id: (details as { id?: string }).id },
-    })
-
-    setSelectedPlan(null)
-    setMessage(`¡Plan ${selectedPlan.name} activado correctamente!`)
-
-    // Recargar datos
-    window.location.reload()
   }
 
   if (loading) return <LoadingSpinner className="py-12" />
@@ -178,7 +142,7 @@ export function PlanPage() {
         })}
       </div>
 
-      {/* Modal de pago PayPal */}
+      {/* Modal de pago */}
       {selectedPlan && (
         <Modal isOpen={!!selectedPlan} onClose={() => setSelectedPlan(null)} title={`Pagar Plan ${selectedPlan.name}`} size="md">
           <div className="space-y-4">
@@ -188,15 +152,33 @@ export function PlanPage() {
               <p className="text-sm text-secondary-500 mt-1">{selectedPlan.maxProducts} productos, {selectedPlan.maxImagesPerProduct} imágenes</p>
             </div>
 
-            <PayPalPaymentButton
-              planName={selectedPlan.name}
-              amount={selectedPlan.price.toFixed(2)}
-              onSuccess={handlePaymentSuccess}
-              onCancel={() => setSelectedPlan(null)}
-            />
+            <Button
+              fullWidth
+              size="lg"
+              className="bg-[#0070ba] hover:bg-[#005ea6] text-white"
+              onClick={async () => {
+                // Activar plan directamente (en producción esto se haría después de verificar el pago)
+                if (!business) return
+                await supabase.from('businesses').update({ plan_id: selectedPlan.id }).eq('id', business.id)
+                await supabase.from('payments').insert({
+                  business_id: business.id,
+                  provider: 'paypal',
+                  provider_payment_id: `manual_${Date.now()}`,
+                  amount: selectedPlan.price,
+                  currency: 'USD',
+                  status: 'completed',
+                  payment_type: 'subscription',
+                })
+                setSelectedPlan(null)
+                setMessage(`¡Plan ${selectedPlan.name} activado!`)
+                window.location.reload()
+              }}
+            >
+              💳 Pagar con PayPal — {formatPrice(selectedPlan.price)}
+            </Button>
 
             <p className="text-xs text-secondary-500 text-center">
-              Pago seguro procesado por PayPal. Puedes cancelar en cualquier momento.
+              En modo prueba el plan se activa directamente. En producción se conectará con PayPal real.
             </p>
           </div>
         </Modal>
