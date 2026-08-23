@@ -1,6 +1,7 @@
-import { Outlet, NavLink } from 'react-router-dom'
+import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom'
 import { cn } from '@/utils/cn'
 import { APP_NAME } from '@/utils/constants'
+import { useAuth } from '@/contexts/AuthContext'
 
 const adminNavItems = [
   { label: 'Dashboard', href: '/admin' },
@@ -12,25 +13,44 @@ const adminNavItems = [
 ]
 
 export function AdminLayout() {
+  const { signOut } = useAuth()
+  const navigate = useNavigate()
+
+  const handleSignOut = async () => {
+    await signOut()
+    navigate('/', { replace: true })
+  }
+
   return (
     <div className="min-h-screen bg-secondary-900">
       {/* Admin navbar */}
       <header className="sticky top-0 z-40 border-b border-secondary-700 bg-secondary-900">
         <div className="flex h-14 items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="h-7 w-7 rounded bg-primary-600 flex items-center justify-center">
-              <span className="text-white font-bold text-xs">VE</span>
-            </div>
-            <span className="font-medium text-white text-sm">
-              {APP_NAME} <span className="text-secondary-400">Admin</span>
-            </span>
+            <Link to="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+              <div className="h-7 w-7 rounded bg-primary-600 flex items-center justify-center">
+                <span className="text-white font-bold text-xs">VE</span>
+              </div>
+              <span className="font-medium text-white text-sm">
+                {APP_NAME} <span className="text-secondary-400">Admin</span>
+              </span>
+            </Link>
           </div>
-          <button
-            type="button"
-            className="text-sm text-secondary-400 hover:text-white transition-colors"
-          >
-            Salir
-          </button>
+          <div className="flex items-center gap-4">
+            <Link
+              to="/dashboard"
+              className="text-sm text-secondary-400 hover:text-white transition-colors"
+            >
+              ← Dashboard
+            </Link>
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="text-sm text-danger-400 hover:text-danger-300 transition-colors"
+            >
+              Cerrar sesión
+            </button>
+          </div>
         </div>
 
         {/* Navigation tabs */}
