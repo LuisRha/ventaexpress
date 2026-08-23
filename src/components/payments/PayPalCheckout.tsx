@@ -14,6 +14,13 @@ interface PayPalCheckoutProps {
 
 export function PayPalCheckout({ planId, planName, amount, businessId, onSuccess }: PayPalCheckoutProps) {
   const handlePaymentSuccess = useCallback(async (details: Record<string, unknown>) => {
+    // SOLO activar si el pago fue COMPLETADO exitosamente
+    const status = (details as { status?: string }).status
+    if (status !== 'COMPLETED') {
+      console.error('Pago no completado:', status)
+      return
+    }
+
     // Activar plan en la base de datos
     await supabase
       .from('businesses')

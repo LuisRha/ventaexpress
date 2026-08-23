@@ -43,8 +43,16 @@ export function usePayPal(
             })
           },
           onApprove: async (_data: unknown, actions: { order: { capture: () => Promise<Record<string, unknown>> } }) => {
-            const details = await actions.order.capture()
-            onSuccess(details)
+            try {
+              const details = await actions.order.capture()
+              if ((details as { status?: string }).status === 'COMPLETED') {
+                onSuccess(details)
+              } else {
+                setError('El pago no se completó. Intenta nuevamente.')
+              }
+            } catch {
+              setError('Error procesando el pago. La tarjeta fue rechazada o hubo un problema.')
+            }
           },
           onError: (err: unknown) => {
             setError('Error con PayPal. Intenta nuevamente.')
