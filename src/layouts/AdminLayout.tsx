@@ -27,7 +27,7 @@ export function AdminLayout() {
       <header className="sticky top-0 z-40 border-b border-secondary-700 bg-secondary-900">
         <div className="flex h-14 items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <Link to="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <Link to="/admin" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <div className="h-7 w-7 rounded bg-primary-600 flex items-center justify-center">
                 <span className="text-white font-bold text-xs">VE</span>
               </div>
