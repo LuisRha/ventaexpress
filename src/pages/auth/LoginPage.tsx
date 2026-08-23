@@ -14,7 +14,7 @@ export function LoginPage() {
   const location = useLocation()
   const [serverError, setServerError] = useState<string | null>(null)
 
-  // Redirigir a la ruta original después del login (si existe)
+  // Redirigir según rol después del login
   const from = (location.state as { from?: string })?.from || '/dashboard'
 
   const {
