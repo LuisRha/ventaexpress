@@ -3,9 +3,12 @@ import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Alert } from '@/components/ui/Alert'
+import { Modal } from '@/components/ui/Modal'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
+import { PayPalPaymentButton } from '@/components/payments/PayPalButton'
 import { useAuth } from '@/contexts/AuthContext'
 import { plansService } from '@/services/plans.service'
+import { supabase } from '@/lib/supabase'
 import type { Plan } from '@/types'
 import { formatPrice } from '@/utils/format'
 
@@ -15,6 +18,7 @@ export function PlanPage() {
   const [currentPlan, setCurrentPlan] = useState<Plan | null>(null)
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState<string | null>(null)
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null)
 
   useEffect(() => {
     const load = async () => {
@@ -32,8 +36,42 @@ export function PlanPage() {
 
   const handleSelectPlan = (plan: Plan) => {
     if (plan.price === 0) return
-    // Por ahora mostrar mensaje — cuando se integre pasarela real, redirigirá al checkout
-    setMessage(`Para activar el plan ${plan.name} ($${plan.price}/mes), la integración de pagos se activará próximamente. Contacta al administrador.`)
+    setSelectedPlan(plan)
+  }
+
+  const handlePaymentSuccess = async (details: Record<string, unknown>) => {
+    if (!selectedPlan || !business) return
+
+    // Actualizar plan del negocio en la DB
+    await supabase
+      .from('businesses')
+      .update({ plan_id: selectedPlan.id })
+      .eq('id', business.id)
+
+    // Registrar pago
+    await supabase.from('payments').insert({
+      business_id: business.id,
+      provider: 'paypal',
+      provider_payment_id: (details as { id?: string }).id || '',
+      amount: selectedPlan.price,
+      currency: 'USD',
+      status: 'completed',
+      payment_type: 'subscription',
+    })
+
+    // Audit log
+    await supabase.from('audit_logs').insert({
+      business_id: business.id,
+      action: 'plan_upgraded',
+      entity_type: 'subscription',
+      metadata: { plan: selectedPlan.name, amount: selectedPlan.price, paypal_id: (details as { id?: string }).id },
+    })
+
+    setSelectedPlan(null)
+    setMessage(`¡Plan ${selectedPlan.name} activado correctamente!`)
+
+    // Recargar datos
+    window.location.reload()
   }
 
   if (loading) return <LoadingSpinner className="py-12" />
@@ -139,6 +177,30 @@ export function PlanPage() {
           )
         })}
       </div>
+
+      {/* Modal de pago PayPal */}
+      {selectedPlan && (
+        <Modal isOpen={!!selectedPlan} onClose={() => setSelectedPlan(null)} title={`Pagar Plan ${selectedPlan.name}`} size="md">
+          <div className="space-y-4">
+            <div className="bg-primary-50 rounded-lg p-4 text-center">
+              <p className="text-sm text-secondary-600">Plan {selectedPlan.name}</p>
+              <p className="text-3xl font-bold text-secondary-900">{formatPrice(selectedPlan.price)}<span className="text-sm font-normal text-secondary-500">/mes</span></p>
+              <p className="text-sm text-secondary-500 mt-1">{selectedPlan.maxProducts} productos, {selectedPlan.maxImagesPerProduct} imágenes</p>
+            </div>
+
+            <PayPalPaymentButton
+              planName={selectedPlan.name}
+              amount={selectedPlan.price.toFixed(2)}
+              onSuccess={handlePaymentSuccess}
+              onCancel={() => setSelectedPlan(null)}
+            />
+
+            <p className="text-xs text-secondary-500 text-center">
+              Pago seguro procesado por PayPal. Puedes cancelar en cualquier momento.
+            </p>
+          </div>
+        </Modal>
+      )}
     </div>
   )
 }
