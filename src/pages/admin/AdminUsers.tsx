@@ -27,7 +27,8 @@ export function AdminUsers() {
   const loadUsers = async () => {
     const { data, error } = await supabase.rpc('admin_get_users')
     if (!error && data) {
-      setUsers(data as AdminUser[])
+      // Excluir al CEO de la lista — CEO no es usuario
+      setUsers((data as AdminUser[]).filter(u => u.role !== 'admin'))
     }
     setLoading(false)
   }
@@ -146,24 +147,17 @@ export function AdminUsers() {
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    <Badge variant={user.role === 'admin' ? 'primary' : 'secondary'}>
-                      {user.role === 'admin' ? 'CEO' : 'Vendedor'}
-                    </Badge>
+                    <Badge variant="secondary">Vendedor</Badge>
                   </td>
                   <td className="px-4 py-3 text-secondary-500">{formatDate(user.created_at)}</td>
                   <td className="px-4 py-3">
-                    {user.role !== 'admin' && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setSelectedUser(user)}
-                      >
-                        Gestionar
-                      </Button>
-                    )}
-                    {user.role === 'admin' && (
-                      <span className="text-xs text-primary-600 font-medium">Tú</span>
-                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedUser(user)}
+                    >
+                      Gestionar
+                    </Button>
                   </td>
                 </tr>
               ))}

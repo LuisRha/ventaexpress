@@ -7,8 +7,8 @@ import { supabase } from '@/lib/supabase'
 export const adminService = {
   async getStats() {
     const [users, businesses, products, orders, payments] = await Promise.all([
-      supabase.from('user_roles').select('*', { count: 'exact', head: true }),
-      supabase.from('businesses').select('*', { count: 'exact', head: true }),
+      supabase.from('user_roles').select('*', { count: 'exact', head: true }).eq('role', 'seller'),
+      supabase.from('businesses').select('*', { count: 'exact', head: true }).neq('status', 'deleted'),
       supabase.from('products').select('*', { count: 'exact', head: true }).neq('status', 'deleted'),
       supabase.from('orders').select('*', { count: 'exact', head: true }),
       supabase.from('payments').select('amount').eq('status', 'completed'),
