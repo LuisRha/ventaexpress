@@ -63,9 +63,8 @@ export function SubscriptionTimer({ businessId }: SubscriptionTimerProps) {
 
   // Normal — mostrar días restantes
   return (
-    <div className="mt-3 bg-orange-50 border border-orange-200 rounded-lg p-3">
-      <p className="text-sm font-semibold text-orange-700">📅 {daysLeft} días restantes</p>
-      <p className="text-xs text-orange-600">Vence el {new Date(Date.now() + daysLeft * 24 * 60 * 60 * 1000).toLocaleDateString('es-EC', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+    <div className="mt-2 bg-orange-50 border border-orange-200 rounded px-3 py-1.5">
+      <p className="text-xs font-semibold text-orange-700">📅 {daysLeft} días restantes — Vence el {new Date(Date.now() + daysLeft * 24 * 60 * 60 * 1000).toLocaleDateString('es-EC', { day: 'numeric', month: 'short' })}</p>
     </div>
   )
 }

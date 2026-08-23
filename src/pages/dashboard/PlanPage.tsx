@@ -50,26 +50,22 @@ export function PlanPage() {
 
   return (
     <div>
-      <div className="mb-2">
-        <h1 className="text-xl font-bold text-secondary-900">Mi Plan</h1>
+      <div className="mb-0">
+        <h1 className="text-lg font-bold text-secondary-900 leading-tight">Mi Plan</h1>
       </div>
 
       {/* Plan actual */}
       {currentPlan && (
-        <Card className="mb-8 bg-gradient-to-r from-primary-50 to-blue-50 border-primary-200">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <Card className="mb-2 bg-gradient-to-r from-primary-50 to-blue-50 border-primary-200 p-3">
+          <div className="flex items-center justify-between">
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h2 className="text-xl font-bold text-secondary-900">Plan {currentPlan.name}</h2>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-secondary-900">{currentPlan.name}</span>
                 <Badge variant="success">Activo</Badge>
               </div>
-              <p className="text-sm text-secondary-600">
-                {currentPlan.maxProducts} productos, {currentPlan.maxImagesPerProduct} imágenes por producto
-              </p>
+              <p className="text-xs text-secondary-600">{currentPlan.maxProducts} productos, {currentPlan.maxImagesPerProduct} imágenes</p>
             </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-secondary-900">{formatPrice(currentPlan.price)}<span className="text-sm font-normal text-secondary-500">/mes</span></p>
-            </div>
+            <p className="text-xl font-bold text-secondary-900">{formatPrice(currentPlan.price)}<span className="text-xs font-normal text-secondary-500">/mes</span></p>
           </div>
           <SubscriptionTimer businessId={business?.id || ''} />
         </Card>
