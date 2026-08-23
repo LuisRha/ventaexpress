@@ -30,18 +30,22 @@ export const businessService = {
    * Retorna null si aún no ha creado negocio.
    */
   async getMyBusiness(): Promise<{ business: Business | null; error: string | null }> {
+    // Obtener usuario actual
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { business: null, error: null }
+
     const { data, error } = await supabase
       .from('businesses')
       .select('*')
-      .single()
-
-    if (error && error.code === 'PGRST116') {
-      // No rows returned — usuario no tiene negocio
-      return { business: null, error: null }
-    }
+      .eq('owner_user_id', user.id)
+      .maybeSingle()
 
     if (error) {
       return { business: null, error: error.message }
+    }
+
+    if (!data) {
+      return { business: null, error: null }
     }
 
     return { business: mapBusiness(data), error: null }
