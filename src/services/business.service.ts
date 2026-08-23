@@ -152,9 +152,13 @@ export const businessService = {
    * Obtener el rol del usuario actual.
    */
   async getUserRole(): Promise<{ role: string | null; error: string | null }> {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) return { role: 'seller', error: null }
+
     const { data, error } = await supabase
       .from('user_roles')
       .select('role')
+      .eq('user_id', session.user.id)
       .maybeSingle()
 
     if (error || !data) {
