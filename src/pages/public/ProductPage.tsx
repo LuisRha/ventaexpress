@@ -101,20 +101,20 @@ export function ProductPage() {
       )}
 
       {/* Hero section */}
-      <section className="max-w-6xl mx-auto px-4 py-6 sm:py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+      <section className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
           {/* Gallery */}
           <div>
             {hasImages ? (
               <>
-                <div className="aspect-square bg-secondary-50 rounded-2xl overflow-hidden mb-3">
+                <div className="aspect-square bg-white rounded-2xl overflow-hidden shadow-xl border border-secondary-100">
                   <img src={product.images[selectedImage]?.publicUrl} alt={product.name} className="w-full h-full object-cover" />
                 </div>
                 {product.images.length > 1 && (
-                  <div className="flex gap-2 overflow-x-auto pb-2">
+                  <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
                     {product.images.map((img, idx) => (
                       <button key={img.id} type="button" onClick={() => setSelectedImage(idx)}
-                        className={`flex-shrink-0 h-16 w-16 rounded-xl overflow-hidden border-2 transition-all ${idx === selectedImage ? 'border-primary-500 ring-2 ring-primary-200' : 'border-secondary-200 opacity-70 hover:opacity-100'}`}>
+                        className={`flex-shrink-0 h-20 w-20 rounded-xl overflow-hidden border-2 transition-all shadow-sm ${idx === selectedImage ? 'border-primary-500 ring-2 ring-primary-200 scale-105' : 'border-secondary-200 opacity-70 hover:opacity-100'}`}>
                         <img src={img.publicUrl} alt="" className="w-full h-full object-cover" />
                       </button>
                     ))}
@@ -122,8 +122,8 @@ export function ProductPage() {
                 )}
               </>
             ) : (
-              <div className="aspect-square bg-gradient-to-br from-primary-50 via-primary-100/50 to-secondary-50 rounded-2xl flex flex-col items-center justify-center border border-primary-100/50">
-                <div className="h-24 w-24 rounded-full bg-white/80 flex items-center justify-center mb-4 shadow-sm">
+              <div className="aspect-square bg-gradient-to-br from-primary-50 via-white to-secondary-50 rounded-2xl flex flex-col items-center justify-center border border-primary-100 shadow-xl">
+                <div className="h-24 w-24 rounded-full bg-white flex items-center justify-center mb-4 shadow-md">
                   <svg className="h-12 w-12 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                   </svg>
@@ -135,11 +135,11 @@ export function ProductPage() {
 
           {/* Product info */}
           <div className="flex flex-col">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-secondary-900 leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-secondary-900 leading-tight tracking-tight">
               {product.name}
             </h1>
             {product.subtitle && (
-              <p className="mt-2 text-lg text-secondary-600">{product.subtitle}</p>
+              <p className="mt-3 text-lg text-secondary-500 font-light">{product.subtitle}</p>
             )}
 
             {/* Reviews summary */}
@@ -160,13 +160,18 @@ export function ProductPage() {
             )}
 
             {/* Price */}
-            <div className="mt-6 flex items-center gap-3">
-              <span className="text-3xl font-bold text-secondary-900">{formatPrice(currentPrice)}</span>
+            <div className="mt-8 bg-secondary-50 rounded-xl p-4 border border-secondary-100">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl font-black text-secondary-900">{formatPrice(currentPrice)}</span>
+                {product.previousPrice && (
+                  <>
+                    <span className="text-xl text-secondary-400 line-through">{formatPrice(product.previousPrice)}</span>
+                    <span className="bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full animate-pulse">-{discount}%</span>
+                  </>
+                )}
+              </div>
               {product.previousPrice && (
-                <>
-                  <span className="text-lg text-secondary-400 line-through">{formatPrice(product.previousPrice)}</span>
-                  <span className="bg-danger-100 text-danger-700 text-sm font-bold px-2.5 py-1 rounded-lg">-{discount}%</span>
-                </>
+                <p className="text-sm text-success-600 font-medium mt-1">Ahorras {formatPrice(product.previousPrice - product.price)}</p>
               )}
             </div>
 
@@ -227,11 +232,11 @@ export function ProductPage() {
             {/* CTA */}
             {!showForm ? (
               <div className="mt-8">
-                <Button size="lg" fullWidth onClick={() => setShowForm(true)} className="py-4 text-base shadow-lg shadow-primary-500/25">
-                  Comprar — Pago al recibir
+                <Button size="lg" fullWidth onClick={() => setShowForm(true)} className="py-5 text-lg font-bold shadow-xl shadow-primary-500/30 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 rounded-xl">
+                  🛒 COMPRAR AHORA
                 </Button>
                 {product.shippingText && (
-                  <p className="text-center text-sm text-secondary-500 mt-2">{product.shippingText}</p>
+                  <p className="text-center text-sm text-secondary-500 mt-3">{product.shippingText}</p>
                 )}
               </div>
             ) : (
@@ -253,19 +258,31 @@ export function ProductPage() {
 
             {/* Trust badges */}
             {product.trustBadges.length > 0 ? (
-              <div className="mt-6 grid grid-cols-3 gap-2">
+              <div className="mt-8 grid grid-cols-3 gap-3">
                 {product.trustBadges.map((badge, i) => (
-                  <div key={i} className="text-center py-3">
-                    <p className="text-xs font-bold text-secondary-900">{badge.label}</p>
+                  <div key={i} className="text-center py-3 bg-secondary-50 rounded-xl border border-secondary-100">
+                    <p className="text-sm font-bold text-secondary-900">{badge.label}</p>
                     <p className="text-xs text-secondary-500">{badge.sublabel}</p>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="mt-6 grid grid-cols-3 gap-2">
-                <div className="text-center py-3"><p className="text-xs font-bold text-secondary-900">Pago</p><p className="text-xs text-secondary-500">al recibir</p></div>
-                <div className="text-center py-3"><p className="text-xs font-bold text-secondary-900">Envío</p><p className="text-xs text-secondary-500">gratis</p></div>
-                <div className="text-center py-3"><p className="text-xs font-bold text-secondary-900">Entrega</p><p className="text-xs text-secondary-500">24-72h</p></div>
+              <div className="mt-8 grid grid-cols-3 gap-3">
+                <div className="text-center py-4 bg-green-50 rounded-xl border border-green-100">
+                  <p className="text-lg mb-0.5">💰</p>
+                  <p className="text-xs font-bold text-secondary-800">Pago</p>
+                  <p className="text-xs text-secondary-500">al recibir</p>
+                </div>
+                <div className="text-center py-4 bg-blue-50 rounded-xl border border-blue-100">
+                  <p className="text-lg mb-0.5">🚚</p>
+                  <p className="text-xs font-bold text-secondary-800">Envío</p>
+                  <p className="text-xs text-secondary-500">gratis</p>
+                </div>
+                <div className="text-center py-4 bg-purple-50 rounded-xl border border-purple-100">
+                  <p className="text-lg mb-0.5">⚡</p>
+                  <p className="text-xs font-bold text-secondary-800">Entrega</p>
+                  <p className="text-xs text-secondary-500">24-72h</p>
+                </div>
               </div>
             )}
           </div>
