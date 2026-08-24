@@ -1,11 +1,23 @@
 import { useState } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
+import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
 import { Alert } from '@/components/ui/Alert'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+
+const asuntoOptions = [
+  { value: 'Problema con mi cuenta', label: 'Problema con mi cuenta' },
+  { value: 'No puedo subir imágenes', label: 'No puedo subir imágenes' },
+  { value: 'Problema con un pedido', label: 'Problema con un pedido' },
+  { value: 'Quiero cambiar de plan', label: 'Quiero cambiar de plan' },
+  { value: 'Error en la página de producto', label: 'Error en la página de producto' },
+  { value: 'Problema con el pago', label: 'Problema con el pago' },
+  { value: 'Solicitar eliminación de cuenta', label: 'Solicitar eliminación de cuenta' },
+  { value: 'Sugerencia o mejora', label: 'Sugerencia o mejora' },
+  { value: 'Otro', label: 'Otro' },
+]
 
 export function SoportePage() {
   const { user, business } = useAuth()
@@ -17,15 +29,14 @@ export function SoportePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!subject.trim() || !message.trim()) {
-      setError('Completa el asunto y el mensaje')
+    if (!subject || !message.trim()) {
+      setError('Selecciona un asunto y escribe tu mensaje')
       return
     }
 
     setSending(true)
     setError(null)
 
-    // Enviar mensaje al admin (buscar admin user_id)
     const { data: admin } = await supabase
       .from('user_roles')
       .select('user_id')
@@ -61,9 +72,10 @@ export function SoportePage() {
 
       <Card className="max-w-lg">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
+          <Select
             label="Asunto"
-            placeholder="¿En qué podemos ayudarte?"
+            options={asuntoOptions}
+            placeholder="Selecciona un asunto"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
           />
@@ -78,15 +90,6 @@ export function SoportePage() {
             Enviar mensaje
           </Button>
         </form>
-      </Card>
-
-      <Card className="mt-4 max-w-lg">
-        <h3 className="font-semibold text-secondary-900 mb-2">Otros canales</h3>
-        <div className="space-y-2 text-sm text-secondary-600">
-          <p>📧 soporte@ventaexpress.com</p>
-          <p>📱 WhatsApp: 0988271324</p>
-          <p>⏰ Horario: Lunes a Viernes, 9am - 6pm</p>
-        </div>
       </Card>
     </div>
   )
