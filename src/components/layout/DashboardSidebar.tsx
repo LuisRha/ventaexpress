@@ -1,5 +1,7 @@
 import { NavLink } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { cn } from '@/utils/cn'
+import { messagesService } from '@/services/messages.service'
 
 interface NavItem {
   label: string
@@ -75,6 +77,18 @@ const navItems: NavItem[] = [
 ]
 
 export function DashboardSidebar() {
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    const load = async () => {
+      const count = await messagesService.getUnreadCount()
+      setUnreadCount(count)
+    }
+    load()
+    const interval = setInterval(load, 30000) // Check every 30s
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:border-r lg:border-secondary-200 lg:bg-white lg:pt-16">
       <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
@@ -94,6 +108,11 @@ export function DashboardSidebar() {
           >
             {item.icon}
             {item.label}
+            {item.label === 'Mensajes' && unreadCount > 0 && (
+              <span className="ml-auto bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                {unreadCount}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>
