@@ -27,6 +27,7 @@ import { CustomersPage } from '@/pages/dashboard/CustomersPage'
 import { PlanPage } from '@/pages/dashboard/PlanPage'
 import { SettingsPage } from '@/pages/dashboard/SettingsPage'
 import { MessagesPage } from '@/pages/dashboard/MessagesPage'
+import { SoportePage } from '@/pages/dashboard/SoportePage'
 
 // Pages — Admin
 import { AdminDashboard } from '@/pages/admin/AdminDashboard'
@@ -80,6 +81,7 @@ export function App() {
             <Route path="/dashboard/plan" element={<PlanPage />} />
             <Route path="/dashboard/settings" element={<SettingsPage />} />
             <Route path="/dashboard/messages" element={<MessagesPage />} />
+            <Route path="/dashboard/soporte" element={<SoportePage />} />
           </Route>
         </Route>
       </Route>
