@@ -2,7 +2,7 @@
 // CONSTANTES GLOBALES
 // ============================================
 
-export const APP_NAME = 'VentaExpress'
+export const APP_NAME = 'VentaXpres'
 
 export const ORDER_STATUS_LABELS: Record<string, string> = {
   PENDING: 'Pendiente',

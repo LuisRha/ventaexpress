@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /onboarding
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://www.ventaxpres.com/sitemap.xml
