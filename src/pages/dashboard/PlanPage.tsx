@@ -57,8 +57,8 @@ export function PlanPage() {
       {/* Plan actual */}
       {currentPlan && (
         <Card className="mb-2 bg-gradient-to-r from-primary-50 to-blue-50 border-primary-200 p-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-4">
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-secondary-900">{currentPlan.name}</span>
