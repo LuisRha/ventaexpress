@@ -126,21 +126,65 @@ export function ProductPage() {
       </header>
 
       {/* ===== MAIN CONTENT ===== */}
-      <main className="max-w-lg mx-auto">
+      <main className="max-w-2xl mx-auto">
         <div className="flex flex-col">
 
           {/* ===== GALLERY ===== */}
-          <section className="relative bg-secondary-50">
+          <section className="relative bg-gradient-to-b from-secondary-100 to-secondary-50">
             {hasImages ? (
               <>
-                {/* Main image */}
-                <div className="aspect-square flex items-center justify-center p-6 sm:p-10">
-                  <img
-                    src={product.images[selectedImage]?.publicUrl}
-                    alt={product.name}
-                    className="max-w-full max-h-full object-contain"
-                  />
+                {/* Swipeable gallery */}
+                <div
+                  className="overflow-hidden touch-pan-y"
+                  onTouchStart={(e) => {
+                    const touch = e.touches[0]
+                    e.currentTarget.dataset.startX = String(touch.clientX)
+                  }}
+                  onTouchEnd={(e) => {
+                    const startX = Number(e.currentTarget.dataset.startX || 0)
+                    const endX = e.changedTouches[0].clientX
+                    const diff = startX - endX
+                    if (Math.abs(diff) > 50) {
+                      if (diff > 0 && selectedImage < product.images.length - 1) {
+                        setSelectedImage(selectedImage + 1)
+                      } else if (diff < 0 && selectedImage > 0) {
+                        setSelectedImage(selectedImage - 1)
+                      }
+                    }
+                  }}
+                >
+                  <div className="aspect-square flex items-center justify-center p-8 sm:p-12">
+                    <img
+                      src={product.images[selectedImage]?.publicUrl}
+                      alt={product.name}
+                      className="max-w-full max-h-full object-contain drop-shadow-lg transition-opacity duration-300"
+                    />
+                  </div>
                 </div>
+
+                {/* Navigation arrows (desktop) */}
+                {product.images.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedImage(Math.max(0, selectedImage - 1))}
+                      className="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 items-center justify-center rounded-full bg-white/80 hover:bg-white shadow-md text-secondary-700 transition-all"
+                    >
+                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedImage(Math.min(product.images.length - 1, selectedImage + 1))}
+                      className="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 items-center justify-center rounded-full bg-white/80 hover:bg-white shadow-md text-secondary-700 transition-all"
+                    >
+                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </>
+                )}
 
                 {/* Dot indicators */}
                 {product.images.length > 1 && (
@@ -151,7 +195,7 @@ export function ProductPage() {
                         type="button"
                         onClick={() => setSelectedImage(idx)}
                         className={`h-2 w-2 rounded-full transition-all ${
-                          idx === selectedImage ? 'bg-secondary-900 w-4' : 'bg-secondary-400'
+                          idx === selectedImage ? 'bg-secondary-900 w-5' : 'bg-secondary-400'
                         }`}
                       />
                     ))}
@@ -160,16 +204,16 @@ export function ProductPage() {
 
                 {/* Thumbnails */}
                 {product.images.length > 1 && (
-                  <div className="flex gap-2 px-4 pb-3 pt-1 overflow-x-auto">
+                  <div className="flex gap-2 px-4 pb-4 pt-2 overflow-x-auto justify-center">
                     {product.images.map((img, idx) => (
                       <button
                         key={img.id}
                         type="button"
                         onClick={() => setSelectedImage(idx)}
-                        className={`flex-shrink-0 h-14 w-14 sm:h-16 sm:w-16 rounded-md overflow-hidden border-2 transition-all ${
+                        className={`flex-shrink-0 h-14 w-14 sm:h-16 sm:w-16 rounded-lg overflow-hidden border-2 transition-all ${
                           idx === selectedImage
-                            ? 'border-secondary-900'
-                            : 'border-transparent opacity-60 hover:opacity-100'
+                            ? 'border-primary-500 shadow-md'
+                            : 'border-secondary-200 opacity-60 hover:opacity-100'
                         }`}
                       >
                         <img src={img.publicUrl} alt="" className="w-full h-full object-cover" />
@@ -224,13 +268,20 @@ export function ProductPage() {
             )}
 
             {/* ===== PRICE ===== */}
-            <div className="mt-5 flex items-baseline gap-2 flex-wrap">
-              <span className="text-xl sm:text-2xl font-bold text-secondary-900">{formatPrice(currentPrice)}</span>
+            <div className="mt-5 p-4 bg-gradient-to-r from-secondary-50 to-white rounded-xl border border-secondary-100">
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span className="text-2xl sm:text-3xl font-bold text-secondary-900">{formatPrice(currentPrice)}</span>
+                {product.previousPrice && (
+                  <>
+                    <span className="text-sm sm:text-base text-secondary-400 line-through">{formatPrice(product.previousPrice)}</span>
+                    <span className="text-xs font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">-{Math.round(((product.previousPrice - currentPrice) / product.previousPrice) * 100)}%</span>
+                  </>
+                )}
+              </div>
               {product.previousPrice && (
-                <>
-                  <span className="text-sm sm:text-base text-secondary-400 line-through">{formatPrice(product.previousPrice)}</span>
-                  <span className="text-2xs sm:text-xs text-secondary-500 italic">Ahorras {formatPrice(product.previousPrice - currentPrice)}</span>
-                </>
+                <p className="text-xs text-success-600 font-semibold mt-1">
+                  Ahorras {formatPrice(product.previousPrice - currentPrice)}
+                </p>
               )}
             </div>
 
@@ -278,23 +329,26 @@ export function ProductPage() {
             {/* ===== PRODUCT OPTIONS / PACKS ===== */}
             {hasOptions ? (
               <div className="mt-6 space-y-2">
+                <p className="text-xs font-semibold text-secondary-500 uppercase tracking-wider mb-2">Elige tu opción</p>
                 {product.productOptions.map((opt: ProductOption, i: number) => (
                   <button
                     key={i}
                     type="button"
                     onClick={() => setSelectedOption(i)}
-                    className={`w-full text-left px-4 py-3 rounded-lg border transition-all flex items-center gap-3 ${
+                    className={`w-full text-left px-4 py-3.5 rounded-xl border-2 transition-all flex items-center gap-3 ${
                       selectedOption === i
-                        ? 'border-secondary-900 bg-secondary-50'
+                        ? 'border-primary-500 bg-primary-50/50 shadow-sm'
                         : 'border-secondary-200 hover:border-secondary-300'
                     }`}
                   >
                     {/* Radio indicator */}
-                    <div className={`h-4 w-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
-                      selectedOption === i ? 'border-secondary-900' : 'border-secondary-300'
+                    <div className={`h-5 w-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all ${
+                      selectedOption === i ? 'border-primary-500 bg-primary-500' : 'border-secondary-300'
                     }`}>
                       {selectedOption === i && (
-                        <div className="h-2 w-2 rounded-full bg-secondary-900" />
+                        <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
                       )}
                     </div>
 
@@ -303,7 +357,7 @@ export function ProductPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold text-secondary-900">{opt.title}</span>
                         {opt.popular && (
-                          <span className="text-2xs bg-secondary-900 text-white px-1.5 py-0.5 rounded font-medium">Popular</span>
+                          <span className="text-2xs bg-primary-600 text-white px-1.5 py-0.5 rounded-full font-medium">Popular</span>
                         )}
                       </div>
                       <p className="text-2xs sm:text-xs text-secondary-500 truncate">{opt.description}</p>
@@ -358,7 +412,7 @@ export function ProductPage() {
                 <button
                   type="button"
                   onClick={scrollToForm}
-                  className="w-full py-3.5 sm:py-4 bg-secondary-900 hover:bg-secondary-800 text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-lg transition-colors"
+                  className="w-full py-4 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white text-sm font-bold uppercase tracking-wider rounded-xl transition-all shadow-lg shadow-primary-500/25"
                 >
                   COMPRAR — PAGO AL RECIBIR
                 </button>
@@ -372,29 +426,29 @@ export function ProductPage() {
             {product.trustBadges.length > 0 ? (
               <div className="mt-5 grid grid-cols-3 gap-2">
                 {product.trustBadges.map((badge, i) => (
-                  <div key={i} className="text-center py-2.5 px-1 border border-secondary-200 rounded-lg">
-                    <p className="text-base mb-0.5">{badge.icon}</p>
-                    <p className="text-2xs sm:text-xs font-semibold text-secondary-800 leading-tight">{badge.label}</p>
+                  <div key={i} className="text-center py-3 px-1 bg-gradient-to-b from-secondary-50 to-white border border-secondary-200 rounded-xl shadow-sm">
+                    <p className="text-lg mb-0.5">{badge.icon}</p>
+                    <p className="text-2xs sm:text-xs font-bold text-secondary-800 leading-tight">{badge.label}</p>
                     <p className="text-2xs text-secondary-400">{badge.sublabel}</p>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="mt-5 grid grid-cols-3 gap-2">
-                <div className="text-center py-2.5 px-1 border border-secondary-200 rounded-lg">
-                  <p className="text-base mb-0.5">💰</p>
-                  <p className="text-2xs sm:text-xs font-semibold text-secondary-800">Pago</p>
-                  <p className="text-2xs text-secondary-400">al recibir</p>
+                <div className="text-center py-3 px-1 bg-gradient-to-b from-green-50 to-white border border-green-200 rounded-xl shadow-sm">
+                  <p className="text-lg mb-0.5">💰</p>
+                  <p className="text-2xs sm:text-xs font-bold text-secondary-800">Pago</p>
+                  <p className="text-2xs text-green-600">al recibir</p>
                 </div>
-                <div className="text-center py-2.5 px-1 border border-secondary-200 rounded-lg">
-                  <p className="text-base mb-0.5">🚚</p>
-                  <p className="text-2xs sm:text-xs font-semibold text-secondary-800">Envío</p>
-                  <p className="text-2xs text-secondary-400">a domicilio</p>
+                <div className="text-center py-3 px-1 bg-gradient-to-b from-blue-50 to-white border border-blue-200 rounded-xl shadow-sm">
+                  <p className="text-lg mb-0.5">🚚</p>
+                  <p className="text-2xs sm:text-xs font-bold text-secondary-800">Envío</p>
+                  <p className="text-2xs text-blue-600">a domicilio</p>
                 </div>
-                <div className="text-center py-2.5 px-1 border border-secondary-200 rounded-lg">
-                  <p className="text-base mb-0.5">⚡</p>
-                  <p className="text-2xs sm:text-xs font-semibold text-secondary-800">Entrega</p>
-                  <p className="text-2xs text-secondary-400">24-72h</p>
+                <div className="text-center py-3 px-1 bg-gradient-to-b from-purple-50 to-white border border-purple-200 rounded-xl shadow-sm">
+                  <p className="text-lg mb-0.5">⚡</p>
+                  <p className="text-2xs sm:text-xs font-bold text-secondary-800">Entrega</p>
+                  <p className="text-2xs text-purple-600">24-72h</p>
                 </div>
               </div>
             )}
@@ -448,7 +502,7 @@ export function ProductPage() {
       {/* ===== CONTENT SECTIONS ===== */}
       {hasSections && (
         <section className="border-t border-secondary-200">
-          <div className="max-w-lg mx-auto">
+          <div className="max-w-2xl mx-auto">
             {product.sections.map((sec, i) => (
               <div key={i} className="border-b border-secondary-100 last:border-b-0">
                 {sec.imageUrl && (
@@ -498,7 +552,7 @@ export function ProductPage() {
       {/* ===== REVIEWS ===== */}
       {hasReviews && (
         <section className="border-t border-secondary-200 py-10 bg-secondary-50">
-          <div className="max-w-lg mx-auto px-4 sm:px-6">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-6">
               <h2 className="text-lg sm:text-xl font-bold text-secondary-900">Reseñas de clientes</h2>
               {product.reviewsSummary && product.reviewsSummary.count > 0 && (
@@ -536,7 +590,7 @@ export function ProductPage() {
       {/* ===== FAQ ===== */}
       {hasFaq && (
         <section className="border-t border-secondary-200 py-10">
-          <div className="max-w-lg mx-auto px-4 sm:px-6">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6">
             <h2 className="text-lg sm:text-xl font-bold text-secondary-900 text-center mb-6">Preguntas frecuentes</h2>
             <div className="space-y-1">
               {product.faq.map((item: ProductFAQ, i: number) => (
@@ -568,14 +622,14 @@ export function ProductPage() {
 
       {/* ===== FINAL CTA ===== */}
       {!showForm && (
-        <section className="bg-secondary-900 py-10 border-t border-secondary-800">
-          <div className="max-w-lg mx-auto px-4 text-center">
+        <section className="bg-gradient-to-br from-primary-700 to-primary-900 py-10 border-t">
+          <div className="max-w-2xl mx-auto px-4 text-center">
             <p className="text-white font-bold text-lg mb-1">{product.name}</p>
             <p className="text-2xl font-bold text-white mb-5">{formatPrice(currentPrice)}</p>
             <button
               type="button"
               onClick={scrollToForm}
-              className="w-full max-w-sm mx-auto block py-3.5 bg-white text-secondary-900 hover:bg-secondary-100 text-sm font-bold uppercase tracking-wider rounded-lg transition-colors"
+              className="w-full max-w-sm mx-auto block py-3.5 bg-white text-primary-700 hover:bg-primary-50 text-sm font-bold uppercase tracking-wider rounded-xl transition-colors shadow-lg"
             >
               Comprar ahora
             </button>
@@ -585,8 +639,8 @@ export function ProductPage() {
 
       {/* ===== STICKY BOTTOM CTA ===== */}
       {!showForm && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-secondary-200 px-4 py-3 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.06)]">
-          <div className="flex items-center gap-3 max-w-lg mx-auto">
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-secondary-200 px-4 py-3 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+          <div className="flex items-center gap-3 max-w-2xl mx-auto">
             <div className="flex-1 min-w-0">
               <p className="text-lg font-bold text-secondary-900">{formatPrice(currentPrice)}</p>
               {product.previousPrice && (
@@ -596,7 +650,7 @@ export function ProductPage() {
             <button
               type="button"
               onClick={scrollToForm}
-              className="flex-shrink-0 py-3 px-6 bg-secondary-900 hover:bg-secondary-800 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors"
+              className="flex-shrink-0 py-3 px-8 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md"
             >
               Comprar
             </button>
