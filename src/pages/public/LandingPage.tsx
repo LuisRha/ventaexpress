@@ -1,8 +1,76 @@
 import { Link } from 'react-router-dom'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Button } from '@/components/ui/Button'
+import { supabase } from '@/lib/supabase'
 import { APP_NAME } from '@/utils/constants'
 
+// Hook para animar números contando hacia arriba
+function useCountUp(target: number, duration: number = 2000) {
+  const [count, setCount] = useState(0)
+  const [started, setStarted] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting && !started) setStarted(true) },
+      { threshold: 0.5 }
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [started])
+
+  useEffect(() => {
+    if (!started) return
+    let start = 0
+    const increment = target / (duration / 16)
+    const timer = setInterval(() => {
+      start += increment
+      if (start >= target) { setCount(target); clearInterval(timer) }
+      else setCount(Math.floor(start))
+    }, 16)
+    return () => clearInterval(timer)
+  }, [started, target, duration])
+
+  return { count, ref }
+}
+
+function CounterItem({ target, suffix, label }: { target: number; suffix: string; label: string }) {
+  const { count, ref } = useCountUp(target)
+  return (
+    <div className="text-center" ref={ref}>
+      <p className="text-2xl sm:text-3xl font-bold text-white">{count.toLocaleString()}{suffix}</p>
+      <p className="text-xs sm:text-sm text-white/60">{label}</p>
+    </div>
+  )
+}
+
 export function LandingPage() {
+  const [totalViews, setTotalViews] = useState<number>(500)
+
+  // Registrar visita y obtener total de vistas
+  const registerView = useCallback(async () => {
+    try {
+      // Incrementar contador de visitas
+      const { data } = await supabase.rpc('increment_page_views', { page_name: 'landing' })
+      if (data && typeof data === 'number') {
+        setTotalViews(data)
+      } else {
+        // Fallback: intentar leer directamente
+        const { data: row } = await supabase
+          .from('page_views')
+          .select('view_count')
+          .eq('page', 'landing')
+          .single()
+        if (row?.view_count) setTotalViews(row.view_count)
+      }
+    } catch {
+      // Si falla, usar valor por defecto
+    }
+  }, [])
+
+  useEffect(() => {
+    registerView()
+  }, [registerView])
   return (
     <>
       {/* Hero */}
@@ -45,22 +113,15 @@ export function LandingPage() {
             Sin tarjeta de crédito. Listo en 2 minutos.
           </p>
 
-          {/* Social proof */}
+          {/* Social proof - Animated counters */}
           <div className="mt-14 flex items-center justify-center gap-6 sm:gap-10">
-            <div className="text-center">
-              <p className="text-2xl sm:text-3xl font-bold text-white">500+</p>
-              <p className="text-xs sm:text-sm text-white/60">Vendedores</p>
-            </div>
+            <CounterItem target={totalViews} suffix="" label="Visitas" />
             <div className="h-8 w-px bg-white/20" />
-            <div className="text-center">
-              <p className="text-2xl sm:text-3xl font-bold text-white">15k+</p>
-              <p className="text-xs sm:text-sm text-white/60">Pedidos</p>
-            </div>
+            <CounterItem target={500} suffix="+" label="Vendedores" />
             <div className="h-8 w-px bg-white/20" />
-            <div className="text-center">
-              <p className="text-2xl sm:text-3xl font-bold text-white">98%</p>
-              <p className="text-xs sm:text-sm text-white/60">Satisfacción</p>
-            </div>
+            <CounterItem target={15000} suffix="+" label="Pedidos" />
+            <div className="h-8 w-px bg-white/20" />
+            <CounterItem target={98} suffix="%" label="Satisfacción" />
           </div>
         </div>
       </section>
