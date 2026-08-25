@@ -10,11 +10,13 @@ import { Alert } from '@/components/ui/Alert'
 import { LoadingPage } from '@/components/shared/LoadingPage'
 import { ErrorState } from '@/components/shared/ErrorState'
 import { ImageUploader } from '@/components/forms/ImageUploader'
+import { ProductAdvancedFields } from '@/components/forms/ProductAdvancedFields'
 import { useAuth } from '@/contexts/AuthContext'
 import { productsService } from '@/services/products.service'
 import { storageService } from '@/services/storage.service'
 import { updateProductSchema, type UpdateProductFormData } from '@/lib/validations/product'
 import type { Product } from '@/types'
+import type { ProductFeature, ProductOption, ProductColor, TrustBadge } from '@/types/product-landing'
 
 export function ProductEditPage() {
   const { productId } = useParams()
@@ -26,6 +28,15 @@ export function ProductEditPage() {
   const [success, setSuccess] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [images, setImages] = useState<Array<{ id: string; storagePath: string; publicUrl: string; sortOrder: number }>>([])
+
+  // Campos avanzados
+  const [colors, setColors] = useState<ProductColor[]>([])
+  const [features, setFeatures] = useState<ProductFeature[]>([])
+  const [productOptions, setProductOptions] = useState<ProductOption[]>([])
+  const [trustBadges, setTrustBadges] = useState<TrustBadge[]>([])
+  const [subtitle, setSubtitle] = useState('')
+  const [badgeText, setBadgeText] = useState('')
+  const [shippingText, setShippingText] = useState('')
 
   const {
     register,
@@ -58,6 +69,14 @@ export function ProductEditPage() {
         deliveryInfo: p.deliveryInfo || '',
         paymentInfo: p.paymentInfo || '',
       })
+      // Cargar campos avanzados
+      setColors(p.colors || [])
+      setFeatures(p.features || [])
+      setProductOptions(p.productOptions || [])
+      setTrustBadges(p.trustBadges || [])
+      setSubtitle(p.subtitle || '')
+      setBadgeText(p.badgeText || '')
+      setShippingText(p.shippingText || '')
     }
 
     setLoading(false)
@@ -89,6 +108,14 @@ export function ProductEditPage() {
       stock: data.stock,
       deliveryInfo: data.deliveryInfo || null,
       paymentInfo: data.paymentInfo || null,
+      // Campos avanzados
+      subtitle: subtitle || null,
+      badgeText: badgeText || null,
+      shippingText: shippingText || null,
+      features,
+      colors,
+      productOptions,
+      trustBadges,
     })
 
     if (error) {
@@ -236,6 +263,24 @@ export function ProductEditPage() {
               />
             </div>
           </Card>
+
+          {/* Campos avanzados de landing */}
+          <ProductAdvancedFields
+            colors={colors}
+            setColors={setColors}
+            features={features}
+            setFeatures={setFeatures}
+            productOptions={productOptions}
+            setProductOptions={setProductOptions}
+            trustBadges={trustBadges}
+            setTrustBadges={setTrustBadges}
+            subtitle={subtitle}
+            setSubtitle={setSubtitle}
+            badgeText={badgeText}
+            setBadgeText={setBadgeText}
+            shippingText={shippingText}
+            setShippingText={setShippingText}
+          />
 
           <div className="flex flex-col sm:flex-row gap-3">
             <Button type="submit" size="lg" isLoading={isSubmitting} disabled={!isDirty}>

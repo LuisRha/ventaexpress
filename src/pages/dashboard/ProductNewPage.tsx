@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/Textarea'
 import { Card } from '@/components/ui/Card'
 import { Alert } from '@/components/ui/Alert'
 import { LoadingPage } from '@/components/shared/LoadingPage'
+import { ProductAdvancedFields } from '@/components/forms/ProductAdvancedFields'
 import { useAuth } from '@/contexts/AuthContext'
 import { productsService, type ProductLimits } from '@/services/products.service'
 import { storageService } from '@/services/storage.service'
@@ -15,6 +16,7 @@ import { createProductSchema, type CreateProductFormData } from '@/lib/validatio
 import { compressProductImage } from '@/utils/compress-image'
 import { slugify } from '@/utils/format'
 import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE_MB } from '@/utils/constants'
+import type { ProductFeature, ProductOption, ProductColor, TrustBadge } from '@/types/product-landing'
 
 export function ProductNewPage() {
   const { business } = useAuth()
@@ -25,6 +27,15 @@ export function ProductNewPage() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [previews, setPreviews] = useState<string[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Campos avanzados
+  const [colors, setColors] = useState<ProductColor[]>([])
+  const [features, setFeatures] = useState<ProductFeature[]>([])
+  const [productOptions, setProductOptions] = useState<ProductOption[]>([])
+  const [trustBadges, setTrustBadges] = useState<TrustBadge[]>([])
+  const [subtitle, setSubtitle] = useState('')
+  const [badgeText, setBadgeText] = useState('')
+  const [shippingText, setShippingText] = useState('')
 
   const {
     register,
@@ -84,6 +95,14 @@ export function ProductNewPage() {
       stock: data.stock,
       deliveryInfo: data.deliveryInfo || undefined,
       paymentInfo: data.paymentInfo || undefined,
+      // Campos avanzados
+      subtitle: subtitle || undefined,
+      badgeText: badgeText || undefined,
+      shippingText: shippingText || undefined,
+      features,
+      colors,
+      productOptions,
+      trustBadges,
     })
 
     if (error) {
@@ -320,6 +339,24 @@ export function ProductNewPage() {
             onChange={handleFileSelect}
           />
         </Card>
+
+        {/* Campos avanzados de landing */}
+        <ProductAdvancedFields
+          colors={colors}
+          setColors={setColors}
+          features={features}
+          setFeatures={setFeatures}
+          productOptions={productOptions}
+          setProductOptions={setProductOptions}
+          trustBadges={trustBadges}
+          setTrustBadges={setTrustBadges}
+          subtitle={subtitle}
+          setSubtitle={setSubtitle}
+          badgeText={badgeText}
+          setBadgeText={setBadgeText}
+          shippingText={shippingText}
+          setShippingText={setShippingText}
+        />
 
         <div className="flex flex-col sm:flex-row gap-3 pt-2">
           <Button type="submit" size="lg" isLoading={isSubmitting}>

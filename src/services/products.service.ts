@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import type { Product, ProductImage } from '@/types'
+import type { ProductFeature, ProductOption, ProductColor, TrustBadge } from '@/types/product-landing'
 
 // ============================================
 // TIPOS
@@ -15,6 +16,14 @@ export interface CreateProductData {
   stock?: number
   deliveryInfo?: string
   paymentInfo?: string
+  // Campos avanzados landing
+  subtitle?: string
+  badgeText?: string
+  shippingText?: string
+  features?: ProductFeature[]
+  colors?: ProductColor[]
+  productOptions?: ProductOption[]
+  trustBadges?: TrustBadge[]
 }
 
 export interface UpdateProductData {
@@ -28,6 +37,14 @@ export interface UpdateProductData {
   deliveryInfo?: string | null
   paymentInfo?: string | null
   status?: 'active' | 'inactive'
+  // Campos avanzados landing
+  subtitle?: string | null
+  badgeText?: string | null
+  shippingText?: string | null
+  features?: ProductFeature[]
+  colors?: ProductColor[]
+  productOptions?: ProductOption[]
+  trustBadges?: TrustBadge[]
 }
 
 export interface ProductLimits {
@@ -167,6 +184,14 @@ export const productsService = {
         delivery_info: input.deliveryInfo?.trim() || null,
         payment_info: input.paymentInfo?.trim() || null,
         status: 'active',
+        // Campos avanzados
+        subtitle: input.subtitle?.trim() || null,
+        badge_text: input.badgeText?.trim() || null,
+        shipping_text: input.shippingText?.trim() || null,
+        features: input.features && input.features.length > 0 ? input.features : null,
+        colors: input.colors && input.colors.length > 0 ? input.colors : null,
+        product_options: input.productOptions && input.productOptions.length > 0 ? input.productOptions : null,
+        trust_badges: input.trustBadges && input.trustBadges.length > 0 ? input.trustBadges : null,
       })
       .select()
       .single()
@@ -197,6 +222,14 @@ export const productsService = {
     if (input.deliveryInfo !== undefined) updateData.delivery_info = input.deliveryInfo?.trim() || null
     if (input.paymentInfo !== undefined) updateData.payment_info = input.paymentInfo?.trim() || null
     if (input.status !== undefined) updateData.status = input.status
+    // Campos avanzados
+    if (input.subtitle !== undefined) updateData.subtitle = input.subtitle?.trim() || null
+    if (input.badgeText !== undefined) updateData.badge_text = input.badgeText?.trim() || null
+    if (input.shippingText !== undefined) updateData.shipping_text = input.shippingText?.trim() || null
+    if (input.features !== undefined) updateData.features = input.features.length > 0 ? input.features : null
+    if (input.colors !== undefined) updateData.colors = input.colors.length > 0 ? input.colors : null
+    if (input.productOptions !== undefined) updateData.product_options = input.productOptions.length > 0 ? input.productOptions : null
+    if (input.trustBadges !== undefined) updateData.trust_badges = input.trustBadges.length > 0 ? input.trustBadges : null
 
     const { data, error } = await supabase
       .from('products')
@@ -299,5 +332,13 @@ function mapProduct(data: Record<string, unknown>): Product {
       sortOrder: Number(img.sort_order || 0),
       createdAt: (img.created_at as string) || '',
     })) as ProductImage[],
+    // Campos avanzados
+    subtitle: (data.subtitle as string) || null,
+    badgeText: (data.badge_text as string) || null,
+    shippingText: (data.shipping_text as string) || null,
+    features: (data.features as ProductFeature[]) || [],
+    colors: (data.colors as ProductColor[]) || [],
+    productOptions: (data.product_options as ProductOption[]) || [],
+    trustBadges: (data.trust_badges as TrustBadge[]) || [],
   }
 }

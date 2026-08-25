@@ -32,6 +32,8 @@ export interface Business {
 // --- Products ---
 export type ProductStatus = 'active' | 'inactive' | 'deleted'
 
+import type { ProductFeature, ProductOption, ProductColor, TrustBadge } from '@/types/product-landing'
+
 export interface Product {
   id: string
   businessId: string
@@ -48,6 +50,14 @@ export interface Product {
   createdAt: string
   updatedAt: string
   images?: ProductImage[]
+  // Campos avanzados landing
+  subtitle?: string | null
+  badgeText?: string | null
+  shippingText?: string | null
+  features?: ProductFeature[]
+  colors?: ProductColor[]
+  productOptions?: ProductOption[]
+  trustBadges?: TrustBadge[]
 }
 
 export interface ProductImage {
