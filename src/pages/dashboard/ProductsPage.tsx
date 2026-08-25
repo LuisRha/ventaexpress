@@ -64,8 +64,8 @@ export function ProductsPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-secondary-900">Productos</h1>
-          <p className="text-secondary-500 mt-1">
+          <h1 className="text-2xl font-bold text-white">Productos</h1>
+          <p className="text-slate-400 mt-1">
             {limits ? `${limits.currentProducts} de ${limits.maxProducts} productos creados` : ''}
           </p>
         </div>
