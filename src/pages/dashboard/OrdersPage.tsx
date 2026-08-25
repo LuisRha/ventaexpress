@@ -63,7 +63,7 @@ export function OrdersPage() {
     const intlPhone = phone.startsWith('0') ? `593${phone.slice(1)}` : phone
     const items = order.items?.map(i => `${i.quantity}x ${i.product?.name || 'Producto'}`).join(', ') || ''
 
-    const message = `Hola ${customerName}, recibimos su pedido #${order.orderNumber} (${items}) por ${formatPrice(order.total)} con pago contra entrega.\n\nPor favor confirme si desea proceder con su compra. El envío y empaquetado tienen costos de logística, por lo que necesitamos su confirmación antes de despachar.\n\n¿Confirma su pedido? Responda SÍ o NO.\n\nGracias por su compra.`
+    const message = `Hola ${customerName}, su pedido #${order.orderNumber} (${items}) por ${formatPrice(order.total)} fue registrado exitosamente.\n\nPara despachar su producto necesitamos que confirme su compra. Los pedidos no confirmados serán cancelados automáticamente ya que la logística y envío generan costos.\n\n¿Está seguro de realizar esta compra? Responda SÍ o NO.\n\n¡Gracias por su preferencia!`
 
     return `https://wa.me/${intlPhone}?text=${encodeURIComponent(message)}`
   }
