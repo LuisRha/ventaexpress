@@ -19,6 +19,7 @@ export interface CreateOrderData {
   reference?: string
   quantity: number
   customerNotes?: string
+  unitPrice?: number
 }
 
 // ============================================
@@ -45,6 +46,7 @@ export const ordersService = {
       p_second_last_name: data.secondLastName || null,
       p_reference: data.reference || null,
       p_customer_notes: data.customerNotes || null,
+      p_unit_price: data.unitPrice || null,
     })
 
     if (error) {

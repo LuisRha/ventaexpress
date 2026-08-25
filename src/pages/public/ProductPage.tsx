@@ -54,6 +54,20 @@ export function ProductPage() {
   const onSubmit = async (data: OrderFormData) => {
     if (!product) return
     setOrderError(null)
+
+    // Construir notas con la selección del cliente
+    const selectionParts: string[] = []
+    if (hasOptions && product.productOptions[selectedOption]) {
+      selectionParts.push(`Opción: ${product.productOptions[selectedOption].title}`)
+    }
+    if (product.colors.length > 0 && product.colors[selectedColor]) {
+      selectionParts.push(`Color: ${product.colors[selectedColor].name}`)
+    }
+    if (data.customerNotes) {
+      selectionParts.push(data.customerNotes)
+    }
+    const notes = selectionParts.length > 0 ? selectionParts.join(' | ') : undefined
+
     const { orderNumber, error } = await ordersService.createOrder({
       productId: product.id,
       businessId: product.businessId,
@@ -66,8 +80,9 @@ export function ProductPage() {
       city: data.city,
       address: data.address,
       reference: data.reference || undefined,
-      quantity: data.quantity,
-      customerNotes: data.customerNotes || undefined,
+      quantity: hasOptions ? (product.productOptions[selectedOption]?.quantity || 1) : (data.quantity || quantity),
+      customerNotes: notes,
+      unitPrice: currentPrice,
     })
     if (error) { setOrderError(error); return }
     setOrderSuccess(orderNumber)
