@@ -102,7 +102,8 @@ export function ProductsPage() {
           {products.map((product) => (
             <Card key={product.id} padding="none" className="overflow-hidden">
               {/* Image */}
-              <div className="aspect-video bg-secondary-100 flex items-center justify-center overflow-hidden">
+              <a href={`/${business?.slug}/${product.slug}`} target="_blank" rel="noopener noreferrer" className="block">
+                <div className="aspect-video bg-secondary-100 flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-90 transition-opacity">
                 {product.images && product.images.length > 0 ? (
                   <img
                     src={product.images[0].publicUrl}
@@ -116,6 +117,7 @@ export function ProductsPage() {
                   </svg>
                 )}
               </div>
+              </a>
               {/* Info */}
               <div className="p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
