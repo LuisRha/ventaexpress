@@ -103,12 +103,12 @@ export function ProductsPage() {
             <Card key={product.id} padding="none" className="overflow-hidden">
               {/* Image */}
               <a href={`/${business?.slug}/${product.slug}`} target="_blank" rel="noopener noreferrer" className="block">
-                <div className="aspect-video bg-secondary-100 flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-90 transition-opacity">
+                <div className="aspect-square bg-secondary-100 flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-90 transition-opacity">
                 {product.images && product.images.length > 0 ? (
                   <img
                     src={product.images[0].publicUrl}
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain p-2"
                     loading="lazy"
                   />
                 ) : (
