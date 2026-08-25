@@ -1,5 +1,23 @@
 import { supabase } from '@/lib/supabase'
+import { isValidUUID } from '@/lib/security'
 import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE_BYTES } from '@/utils/constants'
+
+// Magic bytes para validar tipo de archivo real
+const MAGIC_BYTES: Record<string, number[][]> = {
+  'image/jpeg': [[0xFF, 0xD8, 0xFF]],
+  'image/png': [[0x89, 0x50, 0x4E, 0x47]],
+  'image/webp': [[0x52, 0x49, 0x46, 0x46]], // RIFF header
+}
+
+async function validateMagicBytes(file: File): Promise<boolean> {
+  const buffer = await file.slice(0, 8).arrayBuffer()
+  const bytes = new Uint8Array(buffer)
+  const signatures = MAGIC_BYTES[file.type]
+  if (!signatures) return false
+  return signatures.some(sig =>
+    sig.every((byte, i) => bytes[i] === byte)
+  )
+}
 
 // ============================================
 // SERVICIO DE STORAGE
@@ -22,7 +40,12 @@ export const storageService = {
     productId: string,
     file: File
   ): Promise<{ result: UploadResult | null; error: string | null }> {
-    // Validar tipo
+    // Validar UUIDs
+    if (!isValidUUID(businessId) || !isValidUUID(productId)) {
+      return { result: null, error: 'Identificadores inválidos.' }
+    }
+
+    // Validar tipo MIME
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
       return { result: null, error: 'Tipo de archivo no permitido. Usa JPG, PNG o WebP.' }
     }
@@ -30,6 +53,12 @@ export const storageService = {
     // Validar tamaño
     if (file.size > MAX_FILE_SIZE_BYTES) {
       return { result: null, error: 'El archivo es demasiado grande. Máximo 8MB.' }
+    }
+
+    // Validar magic bytes (contenido real del archivo)
+    const isValidFile = await validateMagicBytes(file)
+    if (!isValidFile) {
+      return { result: null, error: 'El archivo no es una imagen válida.' }
     }
 
     // Generar nombre único

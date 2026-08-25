@@ -32,20 +32,38 @@ export const ordersService = {
    * IMPORTANTE: El precio se calcula en backend, no confiamos en frontend.
    */
   async createOrder(data: CreateOrderData): Promise<{ orderNumber: number | null; error: string | null }> {
+    // Rate limiting: máximo 5 pedidos por minuto
+    const { orderRateLimiter, sanitizeInput, isValidUUID } = await import('@/lib/security')
+    if (!orderRateLimiter.isAllowed(data.phone)) {
+      return { orderNumber: null, error: 'Demasiados pedidos. Espera un momento antes de intentar nuevamente.' }
+    }
+
+    // Validar UUIDs
+    if (!isValidUUID(data.productId) || !isValidUUID(data.businessId)) {
+      return { orderNumber: null, error: 'Datos inválidos.' }
+    }
+
+    // Sanitizar inputs de texto
+    const sanitizedFirstName = sanitizeInput(data.firstName)
+    const sanitizedLastName = sanitizeInput(data.lastName)
+    const sanitizedPhone = data.phone.replace(/[^0-9]/g, '')
+    const sanitizedCity = sanitizeInput(data.city)
+    const sanitizedAddress = sanitizeInput(data.address)
+
     const { data: result, error } = await supabase.rpc('create_order', {
       p_product_id: data.productId,
       p_business_id: data.businessId,
-      p_first_name: data.firstName,
-      p_last_name: data.lastName,
-      p_phone: data.phone,
+      p_first_name: sanitizedFirstName,
+      p_last_name: sanitizedLastName,
+      p_phone: sanitizedPhone,
       p_province: data.province,
-      p_city: data.city,
-      p_address: data.address,
+      p_city: sanitizedCity,
+      p_address: sanitizedAddress,
       p_quantity: data.quantity,
-      p_second_name: data.secondName || null,
-      p_second_last_name: data.secondLastName || null,
-      p_reference: data.reference || null,
-      p_customer_notes: data.customerNotes || null,
+      p_second_name: data.secondName ? sanitizeInput(data.secondName) : null,
+      p_second_last_name: data.secondLastName ? sanitizeInput(data.secondLastName) : null,
+      p_reference: data.reference ? sanitizeInput(data.reference) : null,
+      p_customer_notes: data.customerNotes ? sanitizeInput(data.customerNotes) : null,
       p_unit_price: data.unitPrice || null,
     })
 

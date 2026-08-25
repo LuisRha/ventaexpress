@@ -53,10 +53,25 @@ export const authService = {
    * Iniciar sesión con email y contraseña.
    */
   async signIn({ email, password }: SignInData): Promise<AuthResult> {
+    // Rate limiting: máximo 5 intentos en 5 minutos
+    const { authRateLimiter } = await import('@/lib/security')
+    if (!authRateLimiter.isAllowed(email)) {
+      return {
+        user: null,
+        session: null,
+        error: { message: 'Demasiados intentos. Espera unos minutos antes de intentar nuevamente.', status: 429 } as unknown as import('@supabase/supabase-js').AuthError,
+      }
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
+
+    // Si login exitoso, resetear rate limiter
+    if (!error && data.user) {
+      authRateLimiter.reset(email)
+    }
 
     return {
       user: data.user ?? null,
