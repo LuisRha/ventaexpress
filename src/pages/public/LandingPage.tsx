@@ -114,13 +114,10 @@ export function LandingPage() {
           </p>
 
           {/* Social proof - Animated counters */}
-          <div className="mt-14 flex items-center justify-center gap-6 sm:gap-10">
+          <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 max-w-md sm:max-w-2xl mx-auto">
             <CounterItem target={totalViews} suffix="" label="Visitas" />
-            <div className="h-8 w-px bg-white/20" />
             <CounterItem target={500} suffix="+" label="Vendedores" />
-            <div className="h-8 w-px bg-white/20" />
             <CounterItem target={15000} suffix="+" label="Pedidos" />
-            <div className="h-8 w-px bg-white/20" />
             <CounterItem target={98} suffix="%" label="Satisfacción" />
           </div>
         </div>
