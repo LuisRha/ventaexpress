@@ -43,7 +43,7 @@ export function ProductEditPage() {
     handleSubmit,
     control,
     reset,
-    formState: { errors, isSubmitting, isDirty },
+    formState: { errors, isSubmitting },
   } = useForm<UpdateProductFormData>({
     resolver: zodResolver(updateProductSchema),
   })
@@ -283,7 +283,7 @@ export function ProductEditPage() {
           />
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button type="submit" size="lg" isLoading={isSubmitting} disabled={!isDirty}>
+            <Button type="submit" size="lg" isLoading={isSubmitting}>
               Guardar cambios
             </Button>
             <Link to="/dashboard/products">
