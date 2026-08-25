@@ -215,120 +215,7 @@ export function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {/* Gratis */}
-            <div className="flex flex-col p-6 rounded-2xl border-2 border-secondary-200 bg-white hover:shadow-xl transition-shadow">
-              <div className="mb-5">
-                <h3 className="text-base font-bold text-secondary-900">Gratis</h3>
-                <p className="text-xs text-secondary-500 mt-1">Para empezar</p>
-                <div className="mt-3">
-                  <span className="text-4xl font-extrabold text-secondary-900">$0</span>
-                  <span className="text-secondary-500 text-sm ml-1">/mes</span>
-                </div>
-              </div>
-              <ul className="space-y-2.5 flex-1 mb-6">
-                {['2 productos', '3 fotos por producto', 'Landing básica', 'Formulario de pedido', 'Panel básico'].map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-xs text-secondary-700">
-                    <svg className="h-4 w-4 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link to="/register">
-                <Button variant="outline" fullWidth className="py-3 rounded-xl text-xs font-bold border-2">
-                  Empezar gratis
-                </Button>
-              </Link>
-            </div>
-
-            {/* Básico $5 */}
-            <div className="flex flex-col p-6 rounded-2xl border-2 border-blue-400 bg-gradient-to-b from-blue-50 to-white hover:shadow-xl transition-shadow relative">
-              <div className="mb-5">
-                <h3 className="text-base font-bold text-secondary-900">Básico</h3>
-                <p className="text-xs text-secondary-500 mt-1">Para vendedores activos</p>
-                <div className="mt-3">
-                  <span className="text-4xl font-extrabold text-blue-600">$5</span>
-                  <span className="text-secondary-500 text-sm ml-1">/mes</span>
-                </div>
-              </div>
-              <ul className="space-y-2.5 flex-1 mb-6">
-                {['5 productos', '5 fotos por producto', 'Landing profesional', 'Formulario de pedido', 'WhatsApp integrado', 'Panel de clientes'].map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-xs text-secondary-700">
-                    <svg className="h-4 w-4 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link to="/register">
-                <Button fullWidth className="py-3 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700">
-                  Elegir Básico
-                </Button>
-              </Link>
-            </div>
-
-            {/* PRO $10 */}
-            <div className="flex flex-col p-6 rounded-2xl border-2 border-violet-500 bg-gradient-to-b from-violet-50 to-white relative shadow-xl shadow-violet-500/10">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="bg-gradient-to-r from-violet-600 to-purple-600 text-white text-2xs font-bold px-3 py-1 rounded-full shadow-lg">
-                  Popular
-                </span>
-              </div>
-              <div className="mb-5">
-                <h3 className="text-base font-bold text-secondary-900">PRO</h3>
-                <p className="text-xs text-secondary-500 mt-1">Para negocios en crecimiento</p>
-                <div className="mt-3">
-                  <span className="text-4xl font-extrabold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">$10</span>
-                  <span className="text-secondary-500 text-sm ml-1">/mes</span>
-                </div>
-              </div>
-              <ul className="space-y-2.5 flex-1 mb-6">
-                {['10 productos', '10 fotos por producto', 'Landings avanzadas', 'Formulario de pedido', 'WhatsApp integrado', 'Panel completo', 'Base de clientes', 'Sin branding'].map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-xs text-secondary-700">
-                    <svg className="h-4 w-4 text-violet-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link to="/register">
-                <Button fullWidth className="py-3 rounded-xl text-xs font-bold shadow-lg shadow-violet-500/25 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700">
-                  Elegir PRO
-                </Button>
-              </Link>
-            </div>
-
-            {/* Premium $15 */}
-            <div className="flex flex-col p-6 rounded-2xl border-2 border-amber-400 bg-gradient-to-b from-amber-50 to-white hover:shadow-xl transition-shadow">
-              <div className="mb-5">
-                <h3 className="text-base font-bold text-secondary-900">Premium</h3>
-                <p className="text-xs text-secondary-500 mt-1">Para empresas serias</p>
-                <div className="mt-3">
-                  <span className="text-4xl font-extrabold text-amber-600">$15</span>
-                  <span className="text-secondary-500 text-sm ml-1">/mes</span>
-                </div>
-              </div>
-              <ul className="space-y-2.5 flex-1 mb-6">
-                {['Productos ilimitados', '15 fotos por producto', 'Landings premium', 'Formulario avanzado', 'WhatsApp integrado', 'Panel completo', 'Clientes ilimitados', 'Sin branding', 'Soporte prioritario'].map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-xs text-secondary-700">
-                    <svg className="h-4 w-4 text-amber-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link to="/register">
-                <Button fullWidth className="py-3 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white border-0">
-                  Elegir Premium
-                </Button>
-              </Link>
-            </div>
-          </div>
+          <PricingGrid />
         </div>
       </section>
 
@@ -386,6 +273,108 @@ export function LandingPage() {
         </div>
       </section>
     </>
+  )
+}
+
+// Componente de planes que lee precios de la base de datos
+function PricingGrid() {
+  const [plans, setPlans] = useState<Array<{ name: string; slug: string; price: number; maxProducts: number; maxImagesPerProduct: number }>>([])
+
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase
+        .from('plans')
+        .select('name, slug, price, max_products, max_images_per_product')
+        .eq('active', true)
+        .order('price', { ascending: true })
+      if (data) {
+        setPlans(data.map(p => ({
+          name: p.name,
+          slug: p.slug,
+          price: Number(p.price),
+          maxProducts: p.max_products,
+          maxImagesPerProduct: p.max_images_per_product,
+        })))
+      }
+    }
+    load()
+  }, [])
+
+  const planConfig: Record<string, { features: string[]; border: string; bg: string; priceColor: string; checkColor: string; btnClass: string; btnText: string; popular?: boolean }> = {
+    free: {
+      features: ['Pedidos ilimitados', 'WhatsApp', 'Branding VentaExpress'],
+      border: 'border-secondary-200', bg: 'bg-white', priceColor: 'text-secondary-900', checkColor: 'text-emerald-500',
+      btnClass: '', btnText: 'Plan gratuito',
+    },
+    pro: {
+      features: ['Pedidos ilimitados', 'WhatsApp', 'Gestión de clientes', 'Branding VentaExpress'],
+      border: 'border-blue-400', bg: 'bg-gradient-to-b from-blue-50 to-white', priceColor: 'text-blue-600', checkColor: 'text-emerald-500',
+      btnClass: 'bg-blue-600 hover:bg-blue-700 text-white', btnText: 'Seleccionar Básico',
+    },
+    premium: {
+      features: ['Pedidos ilimitados', 'WhatsApp', 'Sin branding', 'Gestión de clientes', 'Dashboard avanzado'],
+      border: 'border-blue-500', bg: 'bg-gradient-to-b from-blue-50 to-white', priceColor: 'text-blue-600', checkColor: 'text-emerald-500',
+      btnClass: 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg', btnText: 'Seleccionar PRO',
+      popular: true,
+    },
+    enterprise: {
+      features: ['Pedidos ilimitados', 'WhatsApp', 'Sin branding', 'Gestión de clientes', 'Dashboard avanzado', 'Soporte prioritario', 'Analíticas'],
+      border: 'border-secondary-200', bg: 'bg-white', priceColor: 'text-secondary-900', checkColor: 'text-emerald-500',
+      btnClass: '', btnText: 'Seleccionar Enterprise',
+    },
+  }
+
+  if (plans.length === 0) return null
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+      {plans.map((plan) => {
+        const config = planConfig[plan.slug] || planConfig.free
+        const isPaid = plan.price > 0
+        return (
+          <div key={plan.slug} className={`flex flex-col p-6 rounded-2xl border-2 ${config.border} ${config.bg} hover:shadow-xl transition-shadow relative`}>
+            {config.popular && (
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="bg-blue-600 text-white text-2xs font-bold px-3 py-1 rounded-full shadow-lg">
+                  Popular
+                </span>
+              </div>
+            )}
+            <div className="mb-5">
+              <h3 className="text-base font-bold text-secondary-900">{plan.name}</h3>
+              <div className="mt-2">
+                <span className={`text-4xl font-extrabold ${config.priceColor}`}>${plan.price.toFixed(2)}</span>
+                <span className="text-secondary-500 text-sm ml-1">/mes</span>
+              </div>
+              <p className="text-xs font-medium text-blue-600 mt-1">{plan.maxProducts} productos</p>
+            </div>
+            <ul className="space-y-2.5 flex-1 mb-6">
+              {[
+                `${plan.maxProducts} productos`,
+                `${plan.maxImagesPerProduct} imágenes por producto`,
+                ...config.features
+              ].map((f) => (
+                <li key={f} className="flex items-center gap-2 text-xs text-secondary-700">
+                  <svg className={`h-4 w-4 ${config.checkColor} flex-shrink-0`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <Link to="/register">
+              <Button
+                fullWidth
+                variant={isPaid && !config.popular ? 'outline' : isPaid ? undefined : 'outline'}
+                className={`py-3 rounded-xl text-xs font-bold ${isPaid ? config.btnClass : 'border-2'}`}
+              >
+                {config.btnText}
+              </Button>
+            </Link>
+          </div>
+        )
+      })}
+    </div>
   )
 }
 
