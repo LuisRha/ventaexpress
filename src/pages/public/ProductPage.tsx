@@ -126,8 +126,8 @@ export function ProductPage() {
       </header>
 
       {/* ===== MAIN CONTENT ===== */}
-      <main className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
+      <main className="max-w-lg mx-auto">
+        <div className="flex flex-col">
 
           {/* ===== GALLERY ===== */}
           <section className="relative bg-secondary-50">
@@ -142,9 +142,9 @@ export function ProductPage() {
                   />
                 </div>
 
-                {/* Dot indicators (mobile) */}
+                {/* Dot indicators */}
                 {product.images.length > 1 && (
-                  <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-1.5 lg:hidden">
+                  <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-1.5">
                     {product.images.map((_, idx) => (
                       <button
                         key={idx}
@@ -158,15 +158,15 @@ export function ProductPage() {
                   </div>
                 )}
 
-                {/* Thumbnails (desktop) */}
+                {/* Thumbnails */}
                 {product.images.length > 1 && (
-                  <div className="hidden lg:flex gap-2 px-6 pb-4">
+                  <div className="flex gap-2 px-4 pb-3 pt-1 overflow-x-auto">
                     {product.images.map((img, idx) => (
                       <button
                         key={img.id}
                         type="button"
                         onClick={() => setSelectedImage(idx)}
-                        className={`flex-shrink-0 h-16 w-16 rounded-md overflow-hidden border-2 transition-all ${
+                        className={`flex-shrink-0 h-14 w-14 sm:h-16 sm:w-16 rounded-md overflow-hidden border-2 transition-all ${
                           idx === selectedImage
                             ? 'border-secondary-900'
                             : 'border-transparent opacity-60 hover:opacity-100'
@@ -191,7 +191,7 @@ export function ProductPage() {
           </section>
 
           {/* ===== PRODUCT INFO ===== */}
-          <section className="px-4 sm:px-6 lg:px-0 py-6 lg:py-10">
+          <section className="px-4 sm:px-6 py-6">
 
             {/* Category / meta line */}
             {product.subtitle && (
@@ -428,9 +428,8 @@ export function ProductPage() {
 
         {/* ===== ORDER FORM ===== */}
         {showForm && (
-          <div ref={formRef} className="px-4 sm:px-6 pb-8 max-w-lg mx-auto lg:max-w-none lg:grid lg:grid-cols-2 lg:gap-12">
-            <div className="lg:col-start-2">
-              <OrderForm
+          <div ref={formRef} className="px-4 sm:px-6 pb-8">
+            <OrderForm
                 product={product}
                 errors={errors}
                 register={register}
@@ -442,7 +441,6 @@ export function ProductPage() {
                 provinceOptions={provinceOptions}
                 currentPrice={currentPrice}
               />
-            </div>
           </div>
         )}
       </main>
@@ -450,32 +448,27 @@ export function ProductPage() {
       {/* ===== CONTENT SECTIONS ===== */}
       {hasSections && (
         <section className="border-t border-secondary-200">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-lg mx-auto">
             {product.sections.map((sec, i) => (
-              <div
-                key={i}
-                className={`grid grid-cols-1 lg:grid-cols-2 ${
-                  sec.imageUrl ? '' : 'max-w-3xl mx-auto'
-                }`}
-              >
+              <div key={i} className="border-b border-secondary-100 last:border-b-0">
                 {sec.imageUrl && (
-                  <div className={`${sec.reversed ? 'lg:order-2' : ''} bg-secondary-900`}>
+                  <div className="bg-secondary-900">
                     <img
                       src={sec.imageUrl}
                       alt={sec.title}
-                      className="w-full h-64 sm:h-80 lg:h-full object-cover"
+                      className="w-full h-56 sm:h-72 object-cover"
                     />
                   </div>
                 )}
-                <div className={`${sec.reversed ? 'lg:order-1' : ''} px-6 sm:px-10 py-10 sm:py-14 flex flex-col justify-center ${
-                  sec.imageUrl ? 'bg-secondary-900 text-white' : 'bg-white py-10'
+                <div className={`px-4 sm:px-6 py-8 ${
+                  sec.imageUrl ? 'bg-secondary-900 text-white' : 'bg-white'
                 }`}>
                   {sec.subtitle && (
                     <p className={`text-2xs sm:text-xs font-medium uppercase tracking-wider mb-2 ${
                       sec.imageUrl ? 'text-secondary-300' : 'text-primary-600'
                     }`}>{sec.subtitle}</p>
                   )}
-                  <h2 className={`text-lg sm:text-xl lg:text-2xl font-bold mb-3 leading-snug ${
+                  <h2 className={`text-lg sm:text-xl font-bold mb-3 leading-snug ${
                     sec.imageUrl ? 'text-white' : 'text-secondary-900'
                   }`}>{sec.title}</h2>
                   <p className={`text-xs sm:text-sm leading-relaxed mb-4 ${
@@ -504,19 +497,19 @@ export function ProductPage() {
 
       {/* ===== REVIEWS ===== */}
       {hasReviews && (
-        <section className="border-t border-secondary-200 py-10 sm:py-14 bg-secondary-50">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-6 sm:mb-8">
+        <section className="border-t border-secondary-200 py-10 bg-secondary-50">
+          <div className="max-w-lg mx-auto px-4 sm:px-6">
+            <div className="text-center mb-6">
               <h2 className="text-lg sm:text-xl font-bold text-secondary-900">Reseñas de clientes</h2>
               {product.reviewsSummary && product.reviewsSummary.count > 0 && (
                 <div className="mt-2 flex items-center justify-center gap-2">
-                  <span className="text-xl sm:text-2xl font-bold text-secondary-900">{product.reviewsSummary.rating}</span>
-                  <div className="text-yellow-500 text-sm sm:text-base">{'★'.repeat(Math.round(product.reviewsSummary.rating))}</div>
-                  <span className="text-xs sm:text-sm text-secondary-500">({product.reviewsSummary.count.toLocaleString()})</span>
+                  <span className="text-xl font-bold text-secondary-900">{product.reviewsSummary.rating}</span>
+                  <div className="text-yellow-500 text-sm">{'★'.repeat(Math.round(product.reviewsSummary.rating))}</div>
+                  <span className="text-xs text-secondary-500">({product.reviewsSummary.count.toLocaleString()})</span>
                 </div>
               )}
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div className="space-y-3">
               {product.reviews.map((review, i) => (
                 <div key={i} className="bg-white rounded-lg p-4 border border-secondary-200">
                   <div className="flex items-center gap-2 mb-2">
@@ -542,8 +535,8 @@ export function ProductPage() {
 
       {/* ===== FAQ ===== */}
       {hasFaq && (
-        <section className="border-t border-secondary-200 py-10 sm:py-14">
-          <div className="max-w-2xl mx-auto px-4 sm:px-6">
+        <section className="border-t border-secondary-200 py-10">
+          <div className="max-w-lg mx-auto px-4 sm:px-6">
             <h2 className="text-lg sm:text-xl font-bold text-secondary-900 text-center mb-6">Preguntas frecuentes</h2>
             <div className="space-y-1">
               {product.faq.map((item: ProductFAQ, i: number) => (
@@ -573,9 +566,26 @@ export function ProductPage() {
         </section>
       )}
 
-      {/* ===== STICKY MOBILE CTA ===== */}
+      {/* ===== FINAL CTA ===== */}
       {!showForm && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-secondary-200 px-4 py-3 lg:hidden z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.06)]">
+        <section className="bg-secondary-900 py-10 border-t border-secondary-800">
+          <div className="max-w-lg mx-auto px-4 text-center">
+            <p className="text-white font-bold text-lg mb-1">{product.name}</p>
+            <p className="text-2xl font-bold text-white mb-5">{formatPrice(currentPrice)}</p>
+            <button
+              type="button"
+              onClick={scrollToForm}
+              className="w-full max-w-sm mx-auto block py-3.5 bg-white text-secondary-900 hover:bg-secondary-100 text-sm font-bold uppercase tracking-wider rounded-lg transition-colors"
+            >
+              Comprar ahora
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* ===== STICKY BOTTOM CTA ===== */}
+      {!showForm && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-secondary-200 px-4 py-3 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.06)]">
           <div className="flex items-center gap-3 max-w-lg mx-auto">
             <div className="flex-1 min-w-0">
               <p className="text-lg font-bold text-secondary-900">{formatPrice(currentPrice)}</p>
@@ -592,23 +602,6 @@ export function ProductPage() {
             </button>
           </div>
         </div>
-      )}
-
-      {/* ===== DESKTOP FINAL CTA ===== */}
-      {!showForm && (
-        <section className="hidden lg:block bg-secondary-900 py-10 border-t border-secondary-800">
-          <div className="max-w-sm mx-auto text-center">
-            <p className="text-white font-bold text-lg mb-1">{product.name}</p>
-            <p className="text-2xl font-bold text-white mb-5">{formatPrice(currentPrice)}</p>
-            <button
-              type="button"
-              onClick={scrollToForm}
-              className="w-full py-3.5 bg-white text-secondary-900 hover:bg-secondary-100 text-sm font-bold uppercase tracking-wider rounded-lg transition-colors"
-            >
-              Comprar ahora
-            </button>
-          </div>
-        </section>
       )}
 
       {/* ===== FOOTER ===== */}
