@@ -35,8 +35,8 @@ export function DashboardHome() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">¡Hola! 👋</h1>
-          <p className="text-slate-400">{business?.name}</p>
+          <h1 className="text-2xl font-bold text-secondary-900">¡Hola! 👋</h1>
+          <p className="text-secondary-500">{business?.name}</p>
         </div>
         <Link to="/dashboard/products/new">
           <Button className="bg-gradient-to-r from-primary-600 to-primary-700 shadow-lg shadow-primary-500/25">
@@ -67,29 +67,29 @@ export function DashboardHome() {
 
       {/* Cards de acción */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-5 hover:bg-white/10 transition-all">
+        <div className="bg-white rounded-2xl border border-secondary-200 p-5 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <div className="h-10 w-10 rounded-xl bg-blue-500/20 flex items-center justify-center mb-3">
+              <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center mb-3">
                 <span className="text-xl">📦</span>
               </div>
-              <p className="font-semibold text-white">Pedidos totales</p>
-              <p className="text-sm text-slate-400">{totalOrders} pedidos recibidos</p>
+              <p className="font-semibold text-secondary-900">Pedidos totales</p>
+              <p className="text-sm text-secondary-500">{totalOrders} pedidos recibidos</p>
             </div>
             <Link to="/dashboard/orders">
-              <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10">Ver</Button>
+              <Button variant="outline" size="sm">Ver</Button>
             </Link>
           </div>
         </div>
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-5 hover:bg-white/10 transition-all">
+        <div className="bg-white rounded-2xl border border-secondary-200 p-5 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <div className="h-10 w-10 rounded-xl bg-green-500/20 flex items-center justify-center mb-3">
+              <div className="h-10 w-10 rounded-xl bg-green-100 flex items-center justify-center mb-3">
                 <span className="text-xl">🔗</span>
               </div>
-              <p className="font-semibold text-white">Tu enlace</p>
-              <p className="text-sm text-slate-400 truncate max-w-[200px]">
+              <p className="font-semibold text-secondary-900">Tu enlace</p>
+              <p className="text-sm text-secondary-500 truncate max-w-[200px]">
                 ventaxpres.com/{business?.slug}
               </p>
             </div>
@@ -97,7 +97,7 @@ export function DashboardHome() {
               onClick={() => {
                 navigator.clipboard.writeText(`https://www.ventaxpres.com/${business?.slug}`)
               }}
-              className="text-sm text-primary-400 font-medium hover:text-primary-300"
+              className="text-sm text-primary-600 font-medium hover:text-primary-700"
             >
               Copiar
             </button>
@@ -106,9 +106,9 @@ export function DashboardHome() {
       </div>
 
       {/* Tips */}
-      <div className="bg-gradient-to-r from-primary-500/10 to-purple-500/10 rounded-2xl border border-white/10 p-5">
-        <h3 className="font-semibold text-white mb-2">💡 Tips para vender más</h3>
-        <ul className="space-y-2 text-sm text-slate-300">
+      <div className="bg-white rounded-2xl border border-primary-100 p-5">
+        <h3 className="font-semibold text-secondary-900 mb-2">💡 Tips para vender más</h3>
+        <ul className="space-y-2 text-sm text-secondary-600">
           <li className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-primary-400"></span>
             Sube fotos de buena calidad de tus productos

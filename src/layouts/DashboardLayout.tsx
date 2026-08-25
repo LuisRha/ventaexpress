@@ -4,7 +4,7 @@ import { DashboardSidebar } from '@/components/layout/DashboardSidebar'
 
 export function DashboardLayout() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50">
       <DashboardNavbar />
       <DashboardSidebar />
       <main className="lg:pl-64 pt-0">

@@ -90,7 +90,7 @@ export function DashboardSidebar() {
   }, [])
 
   return (
-    <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:border-r lg:border-white/10 lg:bg-slate-900/80 lg:backdrop-blur-xl lg:pt-16">
+    <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:border-r lg:border-secondary-200 lg:bg-white/80 lg:backdrop-blur-xl lg:pt-16">
       <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
         {navItems.map((item) => (
           <NavLink
@@ -101,8 +101,8 @@ export function DashboardSidebar() {
               cn(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-white/10 text-white'
-                  : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                  ? 'bg-primary-100 text-primary-700'
+                  : 'text-secondary-600 hover:bg-primary-50 hover:text-primary-700'
               )
             }
           >

@@ -16,7 +16,7 @@ export function DashboardNavbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-slate-900/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 w-full border-b border-secondary-200 bg-white/80 backdrop-blur-xl">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6">
         {/* Logo + mobile toggle */}
         <div className="flex items-center gap-3">

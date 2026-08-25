@@ -73,8 +73,8 @@ export function OrdersPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Pedidos</h1>
-        <p className="text-slate-400 mt-1">Gestiona los pedidos de tus clientes</p>
+        <h1 className="text-2xl font-bold text-secondary-900">Pedidos</h1>
+        <p className="text-secondary-500 mt-1">Gestiona los pedidos de tus clientes</p>
       </div>
 
       {error && <Alert variant="error" className="mb-4">{error}</Alert>}
@@ -89,7 +89,7 @@ export function OrdersPage() {
             className={`px-3 py-1.5 text-sm rounded-full whitespace-nowrap transition-colors ${
               filter === opt.value
                 ? 'bg-primary-600 text-white'
-                : 'bg-white/10 text-slate-300 hover:bg-white/20'
+                : 'bg-white text-secondary-600 hover:bg-primary-50 border border-secondary-200'
             }`}
           >
             {opt.label}
@@ -102,25 +102,25 @@ export function OrdersPage() {
       ) : (
         <div className="space-y-3">
           {orders.map((order) => (
-            <Card key={order.id} className="cursor-pointer hover:bg-white/10 transition-colors" onClick={() => setSelectedOrder(order)}>
+            <Card key={order.id} className="cursor-pointer hover:border-primary-200 hover:shadow-md transition-all" onClick={() => setSelectedOrder(order)}>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-semibold text-white">#{order.orderNumber}</span>
+                    <span className="font-semibold text-secondary-900">#{order.orderNumber}</span>
                     <Badge variant={statusVariants[order.status] || 'secondary'}>
                       {ORDER_STATUS_LABELS[order.status] || order.status}
                     </Badge>
                   </div>
-                  <p className="text-sm text-slate-300">
+                  <p className="text-sm text-secondary-700">
                     {order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : 'Cliente'}
                   </p>
-                  <p className="text-sm text-slate-400">
+                  <p className="text-sm text-secondary-500">
                     {order.items?.map(i => `${i.quantity}x ${i.product?.name || 'Producto'}`).join(', ')}
                   </p>
-                  <p className="text-xs text-slate-500 mt-1">{formatDateTime(order.createdAt)}</p>
+                  <p className="text-xs text-secondary-400 mt-1">{formatDateTime(order.createdAt)}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <p className="text-lg font-semibold text-white">{formatPrice(order.total)}</p>
+                  <p className="text-lg font-semibold text-secondary-900">{formatPrice(order.total)}</p>
                 </div>
               </div>
             </Card>
