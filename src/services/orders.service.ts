@@ -123,6 +123,18 @@ export const ordersService = {
   },
 
   /**
+   * Eliminar un pedido completamente.
+   */
+  async deleteOrder(orderId: string): Promise<{ error: string | null }> {
+    // Eliminar items primero
+    await supabase.from('order_items').delete().eq('order_id', orderId)
+    // Eliminar pedido
+    const { error } = await supabase.from('orders').delete().eq('id', orderId)
+    if (error) return { error: error.message }
+    return { error: null }
+  },
+
+  /**
    * Obtener conteos de pedidos por estado.
    */
   async getOrderCounts(businessId: string): Promise<Record<string, number>> {
