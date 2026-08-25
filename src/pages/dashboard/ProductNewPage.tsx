@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -10,8 +10,11 @@ import { Alert } from '@/components/ui/Alert'
 import { LoadingPage } from '@/components/shared/LoadingPage'
 import { useAuth } from '@/contexts/AuthContext'
 import { productsService, type ProductLimits } from '@/services/products.service'
+import { storageService } from '@/services/storage.service'
 import { createProductSchema, type CreateProductFormData } from '@/lib/validations/product'
+import { compressProductImage } from '@/utils/compress-image'
 import { slugify } from '@/utils/format'
+import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE_MB } from '@/utils/constants'
 
 export function ProductNewPage() {
   const { business } = useAuth()
@@ -19,6 +22,9 @@ export function ProductNewPage() {
   const [serverError, setServerError] = useState<string | null>(null)
   const [limits, setLimits] = useState<ProductLimits | null>(null)
   const [loadingLimits, setLoadingLimits] = useState(true)
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+  const [previews, setPreviews] = useState<string[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
     register,
@@ -68,7 +74,7 @@ export function ProductNewPage() {
     if (!business) return
     setServerError(null)
 
-    const { error } = await productsService.createProduct(business.id, {
+    const { product, error } = await productsService.createProduct(business.id, {
       name: data.name,
       slug: data.slug,
       description: data.description || undefined,
@@ -85,7 +91,53 @@ export function ProductNewPage() {
       return
     }
 
+    // Subir imágenes comprimidas
+    if (product && selectedFiles.length > 0) {
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const compressed = await compressProductImage(selectedFiles[i])
+        const { result } = await storageService.uploadProductImage(business.id, product.id, compressed)
+        if (result) {
+          await storageService.saveImageRecord(product.id, result.storagePath, result.publicUrl, i)
+        }
+      }
+    }
+
     navigate('/dashboard/products', { replace: true })
+  }
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files) return
+
+    const maxImages = limits?.maxImagesPerProduct || 5
+    const remaining = maxImages - selectedFiles.length
+    const newFiles = Array.from(files).slice(0, remaining)
+
+    // Validar
+    for (const file of newFiles) {
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        setServerError('Solo se permiten imágenes JPG, PNG o WebP')
+        return
+      }
+    }
+
+    setSelectedFiles(prev => [...prev, ...newFiles])
+
+    // Crear previews
+    newFiles.forEach(file => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setPreviews(prev => [...prev, e.target?.result as string])
+      }
+      reader.readAsDataURL(file)
+    })
+
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index))
+    setPreviews(prev => prev.filter((_, i) => i !== index))
   }
 
   if (loadingLimits) {
@@ -216,6 +268,57 @@ export function ProductNewPage() {
               {...register('paymentInfo')}
             />
           </div>
+        </Card>
+
+        <Card>
+          <h2 className="text-lg font-semibold text-secondary-900 mb-4">Imágenes</h2>
+          <p className="text-sm text-secondary-500 mb-3">Máximo {limits?.maxImagesPerProduct || 5} imágenes. Se comprimen automáticamente.</p>
+
+          {/* Previews */}
+          {previews.length > 0 && (
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4">
+              {previews.map((preview, idx) => (
+                <div key={idx} className="relative aspect-square rounded-lg overflow-hidden bg-secondary-100">
+                  <img src={preview} alt={`Imagen ${idx + 1}`} className="w-full h-full object-cover" />
+                  {idx === 0 && (
+                    <span className="absolute top-1 left-1 bg-primary-600 text-white text-2xs px-1.5 py-0.5 rounded font-medium">Principal</span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => removeFile(idx)}
+                    className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded hover:bg-red-700"
+                  >
+                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Upload area */}
+          {selectedFiles.length < (limits?.maxImagesPerProduct || 5) && (
+            <div
+              className="border-2 border-dashed border-secondary-300 rounded-lg p-6 text-center cursor-pointer hover:border-primary-400 hover:bg-primary-50/30 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <svg className="h-8 w-8 text-secondary-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+              </svg>
+              <p className="text-sm text-secondary-600">Click para seleccionar imágenes</p>
+              <p className="text-xs text-secondary-400 mt-1">JPG, PNG o WebP. Máx {MAX_FILE_SIZE_MB}MB. {selectedFiles.length}/{limits?.maxImagesPerProduct || 5}</p>
+            </div>
+          )}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={ALLOWED_IMAGE_TYPES.join(',')}
+            multiple
+            className="hidden"
+            onChange={handleFileSelect}
+          />
         </Card>
 
         <div className="flex flex-col sm:flex-row gap-3 pt-2">
