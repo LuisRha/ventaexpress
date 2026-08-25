@@ -25,6 +25,7 @@ export function ProductPage() {
   const [selectedImage, setSelectedImage] = useState(0)
   const [selectedOption, setSelectedOption] = useState<number>(0)
   const [selectedColor, setSelectedColor] = useState<number>(0)
+  const [quantity, setQuantity] = useState<number>(1)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const formRef = useRef<HTMLDivElement>(null)
 
@@ -32,6 +33,7 @@ export function ProductPage() {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<OrderFormData>({
     resolver: zodResolver(orderFormSchema),
@@ -73,6 +75,10 @@ export function ProductPage() {
 
   const scrollToForm = () => {
     setShowForm(true)
+    // Sincronizar cantidad seleccionada con el formulario
+    if (!hasOptions) {
+      setValue('quantity', quantity)
+    }
     setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, 100)
@@ -270,7 +276,7 @@ export function ProductPage() {
             )}
 
             {/* ===== PRODUCT OPTIONS / PACKS ===== */}
-            {hasOptions && (
+            {hasOptions ? (
               <div className="mt-6 space-y-2">
                 {product.productOptions.map((opt: ProductOption, i: number) => (
                   <button
@@ -310,6 +316,39 @@ export function ProductPage() {
                     </div>
                   </button>
                 ))}
+              </div>
+            ) : (
+              /* Selector de cantidad simple cuando no hay opciones */
+              <div className="mt-5">
+                <p className="text-xs text-secondary-500 mb-2">Cantidad:</p>
+                <div className="inline-flex items-center border border-secondary-200 rounded-lg overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="h-9 w-9 flex items-center justify-center text-secondary-600 hover:bg-secondary-50 transition-colors border-r border-secondary-200"
+                  >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                    </svg>
+                  </button>
+                  <span className="h-9 w-12 flex items-center justify-center text-sm font-semibold text-secondary-900">
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(Math.min(10, quantity + 1))}
+                    className="h-9 w-9 flex items-center justify-center text-secondary-600 hover:bg-secondary-50 transition-colors border-l border-secondary-200"
+                  >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                  </button>
+                </div>
+                {quantity > 1 && (
+                  <p className="text-xs text-secondary-500 mt-1.5">
+                    Total: <span className="font-semibold text-secondary-900">{formatPrice(currentPrice * quantity)}</span>
+                  </p>
+                )}
               </div>
             )}
 
